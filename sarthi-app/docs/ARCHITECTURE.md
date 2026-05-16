@@ -12,11 +12,13 @@ Deliverable (b): a visual breakdown of the **brain** (reasoning engine), the
 ┌──────────────────────────────  BRAIN  ──────────────────────────────────┐
 │                                                                          │
 │   ┌────────────┐  plans + routes + composes + phrases                    │
-│   │ Supervisor │───────────────┬───────────────┬───────────────┐        │
-│   └────────────┘               ▼               ▼               ▼        │
-│   Expense Analyst   Cashflow Forecaster   Goal Tracker   Action Planner  │
-│   (categorise,      (runway under         (per-goal      (rank actions,  │
-│    anomalies)        stress)               badge)         match product) │
+│   │ Supervisor │───────────────┬───────────────┬──────────┬──────────┐   │
+│   └────────────┘               ▼               ▼          ▼          ▼   │
+│   Expense Analyst   Cashflow Forecaster   Goal Tracker   Action     CPF  │
+│   (categorise,      (runway under         (per-goal      Planner    Strat │
+│    anomalies)        stress)               badge)        (rank      egist │
+│                                                          actions,   (life │
+│                                                          match      traj.)│
 │                                                                          │
 │   Optional LLM seam: rephrases composed text. NEVER introduces a number. │
 └─────────────────────────────────┬────────────────────────────────────────┘
@@ -25,7 +27,7 @@ Deliverable (b): a visual breakdown of the **brain** (reasoning engine), the
 │  income_summary()      expense_breakdown()   forecast_cashflow()         │
 │  detect_anomaly()      predict_goals()       goal_tracker()              │
 │  plan_actions()        match_product()       allocate_surplus()          │
-│  check_unlocks()       cpf_project()                                     │
+│  check_unlocks()       cpf_project()         cpf_trajectory()            │
 │  Typed, deterministic. Every output is a figure from a CSV row.          │
 └─────────────────────────────────┬────────────────────────────────────────┘
                                    ▼  reads
@@ -56,6 +58,21 @@ Deliverable (b): a visual breakdown of the **brain** (reasoning engine), the
    scope.
 6. **Emit** — `dashboard_state` + reasoning trace returned; UI is a pure
    render of that state.
+
+## CPF Life Mirror (signature decision)
+
+```
+driver opens Mirror ─► CPF Strategist plans ─► income_summary (monthly_net)
+                    ─► cpf_trajectory (45 → 65, both paths)
+                    ─► splits CPF into housing / healthcare / retirement
+                    ─► output_guard verifies every figure traces to a tool
+                    ─► UI renders side-by-side trajectories + age slider
+                    ─► driver moves slider; tool re-runs; chart redraws
+```
+
+The Mirror **never** executes the opt-in. It prepares the decision; the driver
+confirms with the official CPF Board portal. This is Sarthi's clearest example
+of "trusted with the decision, not the cash."
 
 ## Shock re-plan (signature interaction)
 

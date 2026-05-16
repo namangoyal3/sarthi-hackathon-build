@@ -117,7 +117,21 @@ export default function Dashboard() {
         </section>
       ))}
 
-      {/* 5 — Ask Sarthi: dig deeper */}
+      {/* 5 — CPF Life Mirror entry — the irreversible decision, made calibrated */}
+      <button
+        className="card cpf-entry"
+        onClick={() => setTab('cpf')}
+        aria-label="Open the CPF Life Mirror"
+      >
+        <span className="cpf-entry-dot">◐</span>
+        <span className="cpf-entry-text">
+          <b>CPF Life Mirror</b>
+          <span>The Platform Workers Act opt-in is irreversible. See both lives, side by side.</span>
+        </span>
+        <span aria-hidden>→</span>
+      </button>
+
+      {/* 6 — Ask Sarthi: dig deeper */}
       <button
         className="card ask-bar"
         style={{ marginTop: 4 }}

@@ -931,3 +931,215 @@
     transition-duration: 0.01ms !important;
   }
 }
+
+/* ---- CPF Life Mirror (signature decision) ---- */
+.cpf-entry {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 14px;
+  text-align: left;
+  border-left: 4px solid var(--grab-dark);
+}
+.cpf-entry-dot {
+  width: 36px;
+  height: 36px;
+  border-radius: 999px;
+  display: grid;
+  place-items: center;
+  background: var(--bg-tint);
+  color: var(--grab-dark);
+  font-size: 20px;
+  flex-shrink: 0;
+}
+.cpf-entry-text {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.cpf-entry-text b {
+  font: var(--t-hero);
+  color: var(--ink);
+}
+.cpf-entry-text span {
+  font: var(--t-caption);
+  color: var(--muted);
+}
+
+.cpf-chart-card {
+  padding: 12px 14px 10px;
+}
+.cpf-chart-head {
+  display: flex;
+  gap: 12px;
+  font: var(--t-caption);
+  font-weight: 700;
+  margin-bottom: 6px;
+}
+.cpf-legend {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+.cpf-legend::before {
+  content: '';
+  display: inline-block;
+  width: 14px;
+  height: 3px;
+  border-radius: 2px;
+}
+.cpf-legend.opt {
+  color: var(--grab-dark);
+}
+.cpf-legend.opt::before {
+  background: var(--grab);
+}
+.cpf-legend.stay {
+  color: var(--muted);
+}
+.cpf-legend.stay::before {
+  background: #7f8a85;
+}
+.cpf-chart {
+  width: 100%;
+  height: 140px;
+}
+.cpf-chart-foot {
+  display: flex;
+  justify-content: space-between;
+  font: var(--t-caption);
+  color: var(--muted);
+  margin-top: 4px;
+}
+
+.cpf-slider-card {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.cpf-slider {
+  width: 100%;
+  appearance: none;
+  height: 6px;
+  border-radius: 999px;
+  background: linear-gradient(to right, var(--grab) 0%, var(--bg-tint) 100%);
+  outline: none;
+}
+.cpf-slider::-webkit-slider-thumb {
+  appearance: none;
+  width: 22px;
+  height: 22px;
+  border-radius: 999px;
+  background: var(--grab);
+  border: 3px solid var(--white);
+  box-shadow: var(--shadow-card);
+}
+.cpf-slider::-moz-range-thumb {
+  width: 22px;
+  height: 22px;
+  border-radius: 999px;
+  background: var(--grab);
+  border: 3px solid var(--white);
+  box-shadow: var(--shadow-card);
+}
+.cpf-age-readout {
+  font: var(--t-caption);
+  color: var(--muted);
+}
+.cpf-age-readout b {
+  color: var(--ink);
+  font-weight: 800;
+}
+
+.cpf-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+.cpf-col {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 12px 12px 10px;
+}
+.cpf-col-head {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  border-bottom: 1px solid var(--line);
+  padding-bottom: 8px;
+  margin-bottom: 4px;
+}
+.cpf-col-head b {
+  font-size: 13px;
+}
+.cpf-col-head span span {
+  display: block;
+  font: var(--t-caption);
+  color: var(--muted);
+  margin-top: 2px;
+}
+.cpf-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  font: var(--t-caption);
+  color: var(--muted);
+}
+.cpf-row b {
+  font-size: 13px;
+  color: var(--ink);
+  font-weight: 700;
+}
+.cpf-amt {
+  font-size: 16px !important;
+  color: var(--grab-dark) !important;
+  font-weight: 800 !important;
+}
+.cpf-stay .cpf-amt {
+  color: var(--ink) !important;
+}
+
+.cpf-headline {
+  background: linear-gradient(180deg, var(--bg-tint) 0%, var(--white) 70%);
+  border-left: 4px solid var(--grab);
+}
+
+.cpf-trace {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.cpf-trace-row {
+  display: flex;
+  gap: 10px;
+  align-items: flex-start;
+}
+.cpf-trace-num {
+  width: 22px;
+  height: 22px;
+  border-radius: 999px;
+  background: var(--bg-tint);
+  color: var(--grab-dark);
+  display: grid;
+  place-items: center;
+  font-size: 11px;
+  font-weight: 800;
+  flex-shrink: 0;
+}
+.cpf-trace-text {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  flex: 1;
+}
+.cpf-trace-tool {
+  font-family: ui-monospace, monospace;
+  font-size: 10.5px;
+  color: var(--grab-dark);
+  background: var(--bg-tint);
+  padding: 2px 6px;
+  border-radius: 6px;
+  align-self: flex-start;
+}

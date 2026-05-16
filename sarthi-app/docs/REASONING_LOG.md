@@ -36,3 +36,26 @@ and it never invented a number. The agent has values, not just calculations.
 
 > Reproduce live: run the app, pick Siti, confirm goals, tap the **+** button,
 > choose "S$400 bike repair", then tap **See how Sarthi reasoned →**.
+
+---
+
+## Scenario: Siti opens the CPF Life Mirror
+
+The Platform Workers Act asks Siti to make an irreversible CPF opt-in choice.
+Sarthi's CPF Strategist composes a per-year trajectory for both paths.
+
+| # | Action | Tool | Kind |
+|---|--------|------|------|
+| 1 | Pulled monthly net income from the last 3 months. | `income_summary()` | tool |
+| 2 | Modelled CPF as a Platform Worker: worker 5% + operator match 7% (illustrative). | `cpf_trajectory()` | tool |
+| 3 | Projected 21 years (45 → 65) on both paths at CPF yield 3.4% / cash yield 1.8%. | `cpf_trajectory()` | tool |
+| 4 | Split the CPF balance into housing, healthcare, retirement (illustrative shares). | `cpf_trajectory()` | tool |
+| 5 | Verified every figure traces to a CSV row or a stated assumption — never invented. | `output_guard()` | guard |
+| 6 | Rendered the chart, the side-by-side cards, and the age slider. The driver decides. | `compose()` | compose |
+
+### Why this trace matters
+
+Most "AI tools" tell you what to do about CPF. Sarthi shows you both lives,
+explains every assumption, refuses to execute the opt-in, and points at the
+official CPF Board portal. That is the difference between an advice machine
+and a decision-support agent.
