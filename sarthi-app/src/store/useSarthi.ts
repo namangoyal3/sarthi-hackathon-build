@@ -15,7 +15,7 @@ export type Screen =
   | 'reasoning'
   | 'architecture'
   | 'ask'
-  | 'cpf';
+  | 'shark';
 
 interface ChatMsg {
   role: 'me' | 'ai';
@@ -37,6 +37,7 @@ interface SarthiState {
   state: DashboardState | null;
   replanning: boolean;
   focusGoalId: string | null;
+  lastShock: Shock | null;
 
   chat: ChatMsg[];
 
@@ -62,6 +63,7 @@ export const useSarthi = create<SarthiState>((set, get) => ({
   state: null,
   replanning: false,
   focusGoalId: null,
+  lastShock: null,
   chat: [
     {
       role: 'ai',
@@ -115,10 +117,11 @@ export const useSarthi = create<SarthiState>((set, get) => ({
   replan: async (shock) => {
     const { ds, driver, chosen } = get();
     if (!ds || !driver) return;
-    set({ replanning: true });
+    set({ replanning: true, lastShock: shock });
     await new Promise((r) => setTimeout(r, 1300)); // agent step text streams here
     const state = runAgent(ds, driver, chosen, shock);
-    set({ replanning: false, state, screen: 'dashboard', tab: 'dashboard' });
+    // Route into the Shark Moment first; the dashboard waits behind it.
+    set({ replanning: false, state, screen: 'shark', tab: 'dashboard' });
   },
 
   pushChat: (m) => set({ chat: [...get().chat, m] }),

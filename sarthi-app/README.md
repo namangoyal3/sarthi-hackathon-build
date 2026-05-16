@@ -46,6 +46,9 @@ Plus the signature interactions: a live **Reasoning Log**, a **shock re-plan**
 Platform Workers Act CPF, with an age slider that re-runs `cpf_trajectory()`
 live. Sarthi never executes the opt-in; the driver confirms with the official
 CPF Board portal.
+that opens directly into the **Shark Moment** (a side-by-side comparison of
+informal credit vs GXS FlexiLoan vs the earning route, with every figure
+traceable), and the **CPF opt-in** trade-off model.
 
 ### Why Grab can trust this with their money
 

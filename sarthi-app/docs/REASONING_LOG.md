@@ -59,3 +59,24 @@ Most "AI tools" tell you what to do about CPF. Sarthi shows you both lives,
 explains every assumption, refuses to execute the opt-in, and points at the
 official CPF Board portal. That is the difference between an advice machine
 and a decision-support agent.
+## Scenario: Siti's S$400 bike repair — the Shark Moment
+
+When the shock fires, Sarthi opens the **Shark Moment** screen and compares
+three explicit paths before any recommendation is made.
+
+| # | Action | Tool | Kind |
+|---|--------|------|------|
+| 1 | Read the shock signal: S$400 bike repair, ad-hoc. | `supervisor.plan()` | plan |
+| 2 | Modelled informal credit at illustrative 87% APR over 28 days; computed total cost. | `compare_paths()` | tool |
+| 3 | Modelled GXS FlexiLoan first-draw 60-day interest-free; computed total cost. | `compare_paths()` | tool |
+| 4 | Read top demand cells from `zone_demand_grid.csv`; computed effort hours at the highest net/hour zones. | `compare_paths()` | tool |
+| 5 | Compared the three paths on total cost, buffer impact, time, and APR. | `compare_paths()` | tool |
+| 6 | Recommended the earning route — zero cost, buffer grows. (If recent cashflow had been negative, FlexiLoan would be recommended instead.) | `compare_paths()` | tool |
+| 7 | Verified every figure traces to a CSV row or a stated assumption. | `output_guard()` | guard |
+
+### Why this trace matters
+
+Today, the same shock often sends drivers to off-app loans because that path
+"feels fastest." The Shark Moment makes the cost of that path visible — in
+hard SGD, in days, and in destroyed buffer — before the driver even has a
+chance to pick it. The status quo loses on the merits, on stage, in seconds.

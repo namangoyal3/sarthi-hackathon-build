@@ -10,6 +10,7 @@ import ReasoningLog from './components/ReasoningLog';
 import Architecture from './components/Architecture';
 import AskSarthi from './components/AskSarthi';
 import CPFLifeMirror from './components/CPFLifeMirror';
+import SharkMoment from './components/SharkMoment';
 import { ReplanOverlay, LogExpenseFab } from './components/ReplanOverlay';
 
 const TABS = [
@@ -61,6 +62,8 @@ function Screen() {
       return <AskSarthi />;
     case 'cpf':
       return <CPFLifeMirror />;
+    case 'shark':
+      return <SharkMoment />;
     case 'dashboard':
     case 'reasoning':
     default:

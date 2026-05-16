@@ -13,6 +13,7 @@ const TOOLS = [
   'check_unlocks',
   'cpf_project',
   'cpf_trajectory',
+  'compare_paths',
 ];
 
 export default function Architecture() {
