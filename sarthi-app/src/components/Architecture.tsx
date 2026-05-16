@@ -17,6 +17,7 @@ const TOOLS = [
   'committee_plan',
   'verify_figures',
   'country_shelf',
+  'voice_intent',
 ];
 
 export default function Architecture() {
@@ -52,6 +53,7 @@ export default function Architecture() {
           <span className="pill">Goal Chaser</span>
           <span className="pill">Fatigue & Safety Auditor</span>
           <span className="pill">Verification Critic</span>
+          <span className="pill">Voice Intent Parser</span>
         </div>
         <p className="goal-sub" style={{ marginTop: 8 }}>
           Deterministic by default (demo-safe, sandboxed). Optional LLM seam

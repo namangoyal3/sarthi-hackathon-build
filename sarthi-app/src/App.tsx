@@ -14,6 +14,7 @@ import SharkMoment from './components/SharkMoment';
 import VisibleCommittee from './components/VisibleCommittee';
 import TruthLayer, { TruthScoreBadge } from './components/TruthLayer';
 import MultiCountry from './components/MultiCountry';
+import VoiceCoDriver from './components/VoiceCoDriver';
 import { ReplanOverlay, LogExpenseFab } from './components/ReplanOverlay';
 
 const TABS = [
@@ -74,6 +75,8 @@ function Screen() {
       return <TruthLayer />;
     case 'country':
       return <MultiCountry />;
+    case 'voice':
+      return <VoiceCoDriver />;
     case 'dashboard':
     case 'reasoning':
     default:

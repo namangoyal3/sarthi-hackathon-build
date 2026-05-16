@@ -124,3 +124,20 @@ that has values.
 Most agentic demos are stuck in one jurisdiction. This scenario is the live
 proof that Sarthi's brain is country-agnostic and the shelf is a
 deterministic registry — exactly what makes it scalable across SE Asia.
+## Scenario: Voice Co-Driver hears "I just paid school fees S$120"
+
+| # | Action | Tool | Kind |
+|---|--------|------|------|
+| 1 | Captured the utterance via Web Speech API; downstream is deterministic. | `voice_intent()` | tool |
+| 2 | Detected language hints (en/ms/ta/zh) from the raw transcript. | `voice_intent()` | tool |
+| 3 | Matched the keyword set "paid"/"fee"/"school" → intent `log_expense`. | `voice_intent()` | tool |
+| 4 | Extracted amount=120, category="school fees" from the transcript. | `voice_intent()` | tool |
+| 5 | Composed a grounded reply pointing at the Shark Moment (path options). | `voice_reply()` | compose |
+| 6 | Spoke the reply via SpeechSynthesis (en-SG). The driver never looks at the screen. | `compose()` | compose |
+
+### Why this trace matters
+
+The driver is hands-busy. Voice is not a gimmick — it is the only safe
+surface during a shift. The intent parser is fully deterministic so an
+unreliable network or a noisy environment cannot make Sarthi hallucinate a
+draw, transfer, or opt-in.

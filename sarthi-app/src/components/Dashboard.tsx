@@ -137,6 +137,16 @@ export default function Dashboard() {
         <span className="cpf-entry-text">
           <b>Same agent, every Grab country</b>
           <span>SG · ID · MY · PH — see the shelf swap live.</span>
+      {/* 5 — Voice Co-Driver entry — hands-free */}
+      <button
+        className="card cpf-entry"
+        onClick={() => go('voice')}
+        aria-label="Open the voice co-driver"
+      >
+        <span className="cpf-entry-dot">🎙</span>
+        <span className="cpf-entry-text">
+          <b>Voice Co-Driver</b>
+          <span>Hands-free. Tell Sarthi what you need; it speaks back.</span>
         </span>
         <span aria-hidden>→</span>
       </button>

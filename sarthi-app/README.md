@@ -61,6 +61,11 @@ the device shell, and lets the driver inspect each claim's source.
 trade-off model, and a **Multi-Country Toggle** that swaps the regional
 shelf live (SG/ID/MY/PH — bank, saving pocket, bridge credit, invest,
 pension, partner protection) without touching the agent's brain.
+(log a S$400 bike repair → the dashboard recomputes), the **CPF opt-in**
+trade-off model, and a **Voice Co-Driver** that lets Siti talk to Sarthi
+hands-free during a shift — the agent parses intents deterministically
+(plan, log expense, status, rest, pickup translation) and replies via
+SpeechSynthesis, never executing a draw, transfer, or opt-in via voice.
 
 ### Why Grab can trust this with their money
 
