@@ -117,7 +117,21 @@ export default function Dashboard() {
         </section>
       ))}
 
-      {/* 5 — Ask Sarthi: dig deeper */}
+      {/* 5 — Voice Co-Driver entry — hands-free */}
+      <button
+        className="card cpf-entry"
+        onClick={() => go('voice')}
+        aria-label="Open the voice co-driver"
+      >
+        <span className="cpf-entry-dot">🎙</span>
+        <span className="cpf-entry-text">
+          <b>Voice Co-Driver</b>
+          <span>Hands-free. Tell Sarthi what you need; it speaks back.</span>
+        </span>
+        <span aria-hidden>→</span>
+      </button>
+
+      {/* 6 — Ask Sarthi: dig deeper */}
       <button
         className="card ask-bar"
         style={{ marginTop: 4 }}

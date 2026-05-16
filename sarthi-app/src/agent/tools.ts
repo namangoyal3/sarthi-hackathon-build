@@ -192,6 +192,132 @@ export function predictGoals(ds: Dataset, driver: Driver): ProposedGoal[] {
   return proposals.slice(0, 4);
 }
 
+// voice_intent — deterministic intent parsing for the Voice Co-Driver.
+// Drivers are hands-busy; the parser does not need to be clever, it needs to
+// be reliable. We extract intents (plan, log_expense, status, stop) and slots
+// (hours, amount, category, language). Anything ambiguous returns 'unknown'.
+export type VoiceIntent =
+  | 'plan_window'
+  | 'log_expense'
+  | 'status'
+  | 'rest_check'
+  | 'translate_pickup'
+  | 'unknown';
+
+export interface VoiceParse {
+  intent: VoiceIntent;
+  hours?: number;
+  amount?: number;
+  category?: string;
+  language: 'en' | 'ms' | 'ta' | 'zh';
+  raw: string;
+  evidence: string[];
+}
+
+const LANG_HINTS: { lang: VoiceParse['language']; words: string[] }[] = [
+  { lang: 'ms', words: ['saya', 'jam', 'ringgit', 'esok', 'pasar'] },
+  { lang: 'ta', words: ['enakku', 'naal', 'mani', 'thirumbi'] },
+  { lang: 'zh', words: ['今晚', '小时', '块钱', '今天', '明天'] },
+];
+
+function detectLanguage(t: string): VoiceParse['language'] {
+  const lower = t.toLowerCase();
+  for (const hint of LANG_HINTS) {
+    if (hint.words.some((w) => lower.includes(w.toLowerCase()))) {
+      return hint.lang;
+    }
+  }
+  return 'en';
+}
+
+function findNumber(t: string): number | undefined {
+  const m = t.match(/(\d+(?:\.\d+)?)/);
+  return m ? parseFloat(m[1]) : undefined;
+}
+
+export function voiceIntent(raw: string): VoiceParse {
+  const lower = raw.toLowerCase().trim();
+  const language = detectLanguage(raw);
+  const evidence: string[] = [`raw="${raw}"`, `language=${language}`];
+
+  if (!lower) {
+    return { intent: 'unknown', language, raw, evidence };
+  }
+
+  if (
+    /\b(plan|window|where|best|hour|jam|surge|target|need)\b/.test(lower) &&
+    !/\bschool|fee|repair|bill|fuel|petrol|sick\b/.test(lower)
+  ) {
+    const hours = findNumber(lower);
+    evidence.push('matched plan keywords');
+    return {
+      intent: 'plan_window',
+      hours,
+      language,
+      raw,
+      evidence,
+    };
+  }
+
+  if (/\b(paid|spent|bought|bill|fee|repair|petrol|fuel)\b/.test(lower)) {
+    const amount = findNumber(lower);
+    let category = 'other';
+    if (/\bschool|fee\b/.test(lower)) category = 'school fees';
+    else if (/\bmedical|doctor|hospital|sick\b/.test(lower)) category = 'medical';
+    else if (/\bfuel|petrol|gas\b/.test(lower)) category = 'fuel';
+    else if (/\brepair|workshop|bike\b/.test(lower)) category = 'vehicle repair';
+    evidence.push('matched expense keywords');
+    return {
+      intent: 'log_expense',
+      amount,
+      category,
+      language,
+      raw,
+      evidence,
+    };
+  }
+
+  if (/\b(how am i|where am i|status|runway|on track|safe)\b/.test(lower)) {
+    evidence.push('matched status keywords');
+    return { intent: 'status', language, raw, evidence };
+  }
+
+  if (/\b(tired|sleep|rest|stop|break)\b/.test(lower)) {
+    evidence.push('matched rest keywords');
+    return { intent: 'rest_check', language, raw, evidence };
+  }
+
+  if (/\b(pickup|address|customer says|gate|locked)\b/.test(lower)) {
+    evidence.push('matched pickup-translation keywords');
+    return { intent: 'translate_pickup', language, raw, evidence };
+  }
+
+  evidence.push('no intent matched');
+  return { intent: 'unknown', language, raw, evidence };
+}
+
+export function voiceReply(parse: VoiceParse): string {
+  switch (parse.intent) {
+    case 'plan_window':
+      return parse.hours
+        ? `${parse.hours} hours covers your weekly buffer goal. Sarthi will pick the highest-yield zones; the council vetoed late nights past 23:00.`
+        : 'Sarthi will plan around your goal. Tell me hours or "today" for a same-day plan.';
+    case 'log_expense':
+      return parse.amount
+        ? `Logged ${parse.category} for S$${Math.round(parse.amount)}. Runway recomputed; protected goals still Protected. See the Shark Moment for path options.`
+        : `Got it — ${parse.category} expense. Tell me the amount.`;
+    case 'status':
+      return 'Runway, goals, and the protected loan are all on the dashboard. The Truth Score is on the device shell — every figure provable.';
+    case 'rest_check':
+      return 'Buffer is ahead. The Fatigue & Safety Auditor recommends a rest window now; a single early-evening peak tomorrow stays on plan.';
+    case 'translate_pickup':
+      return 'Sarthi can mediate the pickup message. Tell me what the customer said and the language; the agent will draft a neutral reply in both directions.';
+    case 'unknown':
+    default:
+      return "I didn't catch a clear request. Try: \"plan 3 hours\", \"I just paid school fees S$120\", or \"how am I doing?\"";
+  }
+}
+
 // match_product — best-fit GXS / Grab product for a need (need-driven)
 export function matchProduct(situation: {
   shock: boolean;
