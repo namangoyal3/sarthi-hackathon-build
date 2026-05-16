@@ -931,3 +931,107 @@
     transition-duration: 0.01ms !important;
   }
 }
+
+/* ---- Stress-Test Studio ---- */
+.stress-shocks {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.stress-shock {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 8px 10px;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  background: var(--white);
+  cursor: pointer;
+}
+.stress-shock.on {
+  border-color: var(--grab);
+  background: var(--bg-tint);
+}
+.stress-shock input {
+  margin-top: 3px;
+  accent-color: var(--grab);
+}
+.stress-shock b {
+  font-size: 13px;
+}
+.stress-shock span span {
+  display: block;
+  font: var(--t-caption);
+  color: var(--muted);
+  margin-top: 2px;
+}
+.stress-headline {
+  border-left: 4px solid var(--grab);
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.stress-headline.warn {
+  border-left-color: var(--amber);
+}
+.stress-score {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+}
+.stress-score span {
+  font: var(--t-metric);
+  color: var(--grab-dark);
+}
+.stress-headline.warn .stress-score span {
+  color: var(--amber);
+}
+.stress-score small {
+  font: var(--t-caption);
+  color: var(--muted);
+}
+.stress-hist {
+  display: flex;
+  align-items: flex-end;
+  gap: 4px;
+  height: 130px;
+  padding: 12px;
+}
+.stress-bar {
+  flex: 1;
+  background: linear-gradient(180deg, var(--grab) 0%, var(--grab-dark) 100%);
+  border-radius: 6px 6px 0 0;
+  min-height: 4px;
+  transition: height 220ms var(--ease);
+}
+.stress-links {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.stress-link-row {
+  display: flex;
+  gap: 10px;
+  align-items: flex-start;
+}
+.stress-link-rank {
+  width: 24px;
+  height: 24px;
+  border-radius: 999px;
+  background: var(--bg-tint);
+  color: var(--grab-dark);
+  display: grid;
+  place-items: center;
+  font-size: 12px;
+  font-weight: 800;
+  flex-shrink: 0;
+}
+.stress-link-row b {
+  font-size: 13px;
+}
+.stress-link-row span span {
+  display: block;
+  font: var(--t-caption);
+  color: var(--muted);
+  margin-top: 2px;
+}

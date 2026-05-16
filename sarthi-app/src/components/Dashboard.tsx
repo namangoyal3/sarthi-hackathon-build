@@ -117,7 +117,21 @@ export default function Dashboard() {
         </section>
       ))}
 
-      {/* 5 — Ask Sarthi: dig deeper */}
+      {/* 5 — Stress-Test Studio entry */}
+      <button
+        className="card cpf-entry"
+        onClick={() => go('stress')}
+        aria-label="Open the Stress-Test Studio"
+      >
+        <span className="cpf-entry-dot">≈</span>
+        <span className="cpf-entry-text">
+          <b>Stress-Test Studio</b>
+          <span>800 simulations of the next 12 weeks. See your weakest link.</span>
+        </span>
+        <span aria-hidden>→</span>
+      </button>
+
+      {/* 6 — Ask Sarthi: dig deeper */}
       <button
         className="card ask-bar"
         style={{ marginTop: 4 }}

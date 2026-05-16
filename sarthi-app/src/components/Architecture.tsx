@@ -12,6 +12,7 @@ const TOOLS = [
   'allocate_surplus',
   'check_unlocks',
   'cpf_project',
+  'run_stress_test',
 ];
 
 export default function Architecture() {
