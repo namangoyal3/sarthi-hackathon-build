@@ -49,6 +49,10 @@ CPF Board portal.
 that opens directly into the **Shark Moment** (a side-by-side comparison of
 informal credit vs GXS FlexiLoan vs the earning route, with every figure
 traceable), and the **CPF opt-in** trade-off model.
+(log a S$400 bike repair → the dashboard recomputes), the **Visible Committee**
+where three earner agents (Conservative Earner, Goal Chaser, Fatigue & Safety
+Auditor) debate the next 7 days on screen and converge on a consensus plan,
+and the **CPF opt-in** trade-off model.
 
 ### Why Grab can trust this with their money
 

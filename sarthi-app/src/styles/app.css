@@ -945,6 +945,48 @@
   width: 36px;
   height: 36px;
   border-radius: 999px;
+/* ---- Visible Committee (debate UI) ---- */
+.committee-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.committee-card {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 12px;
+  border-left: 4px solid var(--line);
+}
+.committee-cons {
+  border-left-color: #5a8c75;
+}
+.committee-chaser {
+  border-left-color: var(--grab);
+}
+.committee-safety {
+  border-left-color: var(--amber);
+}
+.committee-head {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  border-bottom: 1px solid var(--line);
+  padding-bottom: 6px;
+  margin-bottom: 4px;
+}
+.committee-head b {
+  font-size: 13px;
+}
+.committee-head span span {
+  display: block;
+  font: var(--t-caption);
+  color: var(--muted);
+}
+.committee-ic {
+  width: 30px;
+  height: 30px;
+  border-radius: 8px;
   display: grid;
   place-items: center;
   background: var(--bg-tint);
@@ -1081,6 +1123,10 @@
   margin-top: 2px;
 }
 .cpf-row {
+  font-size: 14px;
+  flex-shrink: 0;
+}
+.committee-row {
   display: flex;
   justify-content: space-between;
   align-items: baseline;
@@ -1088,6 +1134,7 @@
   color: var(--muted);
 }
 .cpf-row b {
+.committee-row b {
   font-size: 13px;
   color: var(--ink);
   font-weight: 700;
@@ -1204,11 +1251,19 @@
   padding-top: 8px;
 }
 .shark-evidence summary {
+.committee-concerns {
+  font: var(--t-caption);
+  color: var(--muted);
+  border-top: 1px dashed var(--line);
+  padding-top: 6px;
+}
+.committee-concerns summary {
   cursor: pointer;
   font-weight: 700;
   color: var(--grab-dark);
 }
 .shark-evidence ul {
+.committee-concerns ul {
   margin: 6px 0 0 16px;
   display: flex;
   flex-direction: column;
@@ -1222,4 +1277,83 @@
   .shark-grid {
     grid-template-columns: 1fr 1fr;
   }
+
+.committee-debate {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  min-height: 160px;
+}
+.committee-bubble {
+  background: var(--shell);
+  border-radius: 12px;
+  padding: 8px 10px;
+  font: var(--t-body);
+  border-left: 3px solid var(--line);
+  animation: stepin 280ms var(--ease) both;
+}
+.committee-bubble.committee-cons {
+  border-left-color: #5a8c75;
+}
+.committee-bubble.committee-chaser {
+  border-left-color: var(--grab);
+}
+.committee-bubble.committee-safety {
+  border-left-color: var(--amber);
+}
+.committee-speaker {
+  display: flex;
+  align-items: baseline;
+  gap: 6px;
+  font: var(--t-caption);
+  color: var(--muted);
+  margin-bottom: 2px;
+}
+.committee-speaker b {
+  color: var(--ink);
+  font-size: 12px;
+}
+.committee-round {
+  margin-left: auto;
+  font: var(--t-caption);
+  color: var(--muted);
+  font-style: italic;
+}
+.committee-typing {
+  display: inline-flex;
+  gap: 4px;
+  align-self: flex-start;
+  padding: 8px 10px;
+  border-radius: 10px;
+  background: var(--shell);
+}
+.committee-typing span {
+  width: 6px;
+  height: 6px;
+  border-radius: 999px;
+  background: var(--muted);
+  animation: cdot 1.2s infinite ease-in-out;
+}
+.committee-typing span:nth-child(2) {
+  animation-delay: 0.2s;
+}
+.committee-typing span:nth-child(3) {
+  animation-delay: 0.4s;
+}
+@keyframes cdot {
+  0%, 80%, 100% { transform: scale(0.6); opacity: 0.4; }
+  40% { transform: scale(1.1); opacity: 1; }
+}
+
+.committee-consensus {
+  background: linear-gradient(180deg, var(--bg-tint) 0%, var(--white) 70%);
+  border-left: 4px solid var(--grab);
+}
+.committee-rejected {
+  margin: 8px 0 0 16px;
+  font: var(--t-caption);
+  color: var(--muted);
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
 }

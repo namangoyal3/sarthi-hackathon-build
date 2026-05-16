@@ -11,12 +11,14 @@ import Architecture from './components/Architecture';
 import AskSarthi from './components/AskSarthi';
 import CPFLifeMirror from './components/CPFLifeMirror';
 import SharkMoment from './components/SharkMoment';
+import VisibleCommittee from './components/VisibleCommittee';
 import { ReplanOverlay, LogExpenseFab } from './components/ReplanOverlay';
 
 const TABS = [
   { id: 'dashboard', label: 'Dashboard', ic: '◎' },
   { id: 'route', label: 'Pool', ic: '◈' },
   { id: 'cpf', label: 'CPF', ic: '◐' },
+  { id: 'committee', label: 'Council', ic: '◇' },
   { id: 'unlocks', label: 'Unlocks', ic: '🛡' },
   { id: 'ask', label: 'Ask', ic: '✦' },
 ] as const;
@@ -64,6 +66,8 @@ function Screen() {
       return <CPFLifeMirror />;
     case 'shark':
       return <SharkMoment />;
+    case 'committee':
+      return <VisibleCommittee />;
     case 'dashboard':
     case 'reasoning':
     default:

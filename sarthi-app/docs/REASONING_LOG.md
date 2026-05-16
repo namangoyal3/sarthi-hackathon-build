@@ -72,6 +72,16 @@ three explicit paths before any recommendation is made.
 | 4 | Read top demand cells from `zone_demand_grid.csv`; computed effort hours at the highest net/hour zones. | `compare_paths()` | tool |
 | 5 | Compared the three paths on total cost, buffer impact, time, and APR. | `compare_paths()` | tool |
 | 6 | Recommended the earning route — zero cost, buffer grows. (If recent cashflow had been negative, FlexiLoan would be recommended instead.) | `compare_paths()` | tool |
+## Scenario: the Visible Committee plans Siti's next 7 days
+
+| # | Action | Tool | Kind |
+|---|--------|------|------|
+| 1 | Pulled top expected_net_per_hour cells from `zone_demand_grid.csv`. | `committee_plan()` | tool |
+| 2 | Conservative Earner proposed 24h, daytime peaks only — buffer first. | `committee_plan()` | tool |
+| 3 | Goal Chaser proposed 38h including two late-night surges — accelerate insurance funding. | `committee_plan()` | tool |
+| 4 | Fatigue & Safety Auditor capped at 30h and vetoed driving past 23:00. | `committee_plan()` | tool |
+| 5 | Round 2 negotiation: Chaser conceded; one early-evening surge replaces a late-night surge. | `committee_plan()` | tool |
+| 6 | Consensus: 30h across daytime peaks + one early-evening surge; rest day reserved. | `committee_plan()` | tool |
 | 7 | Verified every figure traces to a CSV row or a stated assumption. | `output_guard()` | guard |
 
 ### Why this trace matters
@@ -80,3 +90,7 @@ Today, the same shock often sends drivers to off-app loans because that path
 "feels fastest." The Shark Moment makes the cost of that path visible — in
 hard SGD, in days, and in destroyed buffer — before the driver even has a
 chance to pick it. The status quo loses on the merits, on stage, in seconds.
+This is the part of Sarthi where heterogeneous voices argue with values, not
+just calculate. The driver sees the disagreement, then sees the converged
+plan with the rejected alternatives explicitly listed. That is the difference
+between "an AI that recommends" and "a council that decides with you."

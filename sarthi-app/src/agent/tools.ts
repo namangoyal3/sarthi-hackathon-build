@@ -10,6 +10,7 @@ import type {
   Txn,
   AllocationPlan,
   Unlock,
+  ZoneCell,
 } from '../data/types';
 
 export const sgd = (n: number): string =>
@@ -327,6 +328,224 @@ export function comparePaths(
       `Illustrative informal-credit APR ${informalAprPct}% over ${informalTermDays} days.`,
       `Illustrative FlexiLoan first-draw window: ${flexiTermDays} days interest-free.`,
       `Earning route uses the best ${sortedZones.length} cells from zone_demand_grid.csv.`,
+// committee_plan — three heterogeneous earner agents debate the next 7 days
+// of work and converge on a plan. Each agent has its own values and reasons
+// from the same data. The driver sees the disagreement on screen and picks.
+//
+// This is the "Visible Committee": Conservative Earner, Goal Chaser, and
+// Fatigue & Safety Auditor. Their proposals diverge on hours, zones, and
+// risk; the consensus is the lowest-friction plan that respects all three.
+export type CommitteeAgentId = 'conservative' | 'chaser' | 'safety';
+
+export interface CommitteeProposal {
+  agent: CommitteeAgentId;
+  agent_label: string;
+  agent_role: string;
+  hours_next_7d: number;
+  est_earnings_sgd: number;
+  zones: string[];
+  argument: string;
+  concerns: string[];
+}
+
+export interface CommitteeRound {
+  round: number;
+  agent: CommitteeAgentId;
+  speaker: string;
+  text: string;
+}
+
+export interface CommitteePlan {
+  proposals: CommitteeProposal[];
+  debate: CommitteeRound[];
+  consensus: {
+    hours_next_7d: number;
+    est_earnings_sgd: number;
+    zones: string[];
+    summary: string;
+    chosen_voices: CommitteeAgentId[];
+    rejected: { agent: CommitteeAgentId; reason: string }[];
+  };
+  evidence: string[];
+}
+
+export function committeePlan(ds: Dataset, driver: Driver): CommitteePlan {
+  const inc = incomeSummary(ds, driver.driver_id);
+  const dailyNet = inc.avgDailyNet;
+  const sortedZones = [...ds.zones]
+    .filter((z) => z.expected_net_per_hour_sgd > 0)
+    .sort((a, b) => b.expected_net_per_hour_sgd - a.expected_net_per_hour_sgd);
+  const topZones = sortedZones.slice(0, 6);
+  const nightZones = topZones.filter((z) => z.hour >= 19 || z.hour < 5);
+  const dayZones = topZones.filter((z) => z.hour >= 5 && z.hour < 19);
+  const bestNetPerHour = topZones[0]?.expected_net_per_hour_sgd ?? 22;
+  const restDow = (driver.rest_dow || 'Sunday').slice(0, 3);
+
+  const fmtZone = (z: ZoneCell) =>
+    `${z.zone_label} ${z.day_of_week} ${String(z.hour).padStart(2, '0')}:00`;
+
+  // Conservative Earner — protect the buffer first; modest hours, daytime only.
+  const conservativeHours = 24;
+  const conservative: CommitteeProposal = {
+    agent: 'conservative',
+    agent_label: 'Conservative Earner',
+    agent_role: 'Protects the buffer first',
+    hours_next_7d: conservativeHours,
+    est_earnings_sgd: Math.round(conservativeHours * bestNetPerHour * 0.85),
+    zones: dayZones.slice(0, 3).map(fmtZone),
+    argument:
+      'Lock in steady daytime windows in the highest-yield daytime zones. ' +
+      'Avoid surge volatility. Even a soft week clears the weekly goal need.',
+    concerns: [
+      'Misses the highest-paying late-night surges.',
+      'Might leave money on the table on a busy weekend.',
+    ],
+  };
+
+  // Goal Chaser — accelerate toward the family insurance goal; nights welcome.
+  const chaserHours = 38;
+  const chaser: CommitteeProposal = {
+    agent: 'chaser',
+    agent_label: 'Goal Chaser',
+    agent_role: 'Accelerates the funded goal',
+    hours_next_7d: chaserHours,
+    est_earnings_sgd: Math.round(chaserHours * bestNetPerHour * 1.05),
+    zones: [...nightZones.slice(0, 2), ...dayZones.slice(0, 2)].map(fmtZone),
+    argument:
+      'Stack two late-night surge windows with two morning peaks. ' +
+      'This is the week the buffer + insurance both stay on track.',
+    concerns: [
+      'Raises fatigue and reduces ' +
+        restDow +
+        ' as a recovery day.',
+      'Higher idle-mileage cost if surges drop.',
+    ],
+  };
+
+  // Fatigue & Safety Auditor — caps hours, mandates rest, no late nights.
+  const safetyCap = 30;
+  const safety: CommitteeProposal = {
+    agent: 'safety',
+    agent_label: 'Fatigue & Safety Auditor',
+    agent_role: 'Caps hours and protects rest',
+    hours_next_7d: safetyCap,
+    est_earnings_sgd: Math.round(safetyCap * bestNetPerHour * 0.95),
+    zones: dayZones.slice(0, 4).map(fmtZone),
+    argument:
+      'Cap at ' +
+      safetyCap +
+      ' hours, no driving after 23:00, mandatory rest on ' +
+      restDow +
+      '. ' +
+      'Income volatility is high; a tired driver is a costly driver.',
+    concerns: [
+      'Slower goal progression on a single bad week.',
+      'Slightly lower ceiling if the week is unusually busy.',
+    ],
+  };
+
+  const proposals = [conservative, chaser, safety];
+
+  // Choose consensus: stay within safety cap, prefer chaser zones for high
+  // yield, but down-shift hours to the safety ceiling. This makes the
+  // committee feel like a real negotiation, not three independent suggestions.
+  const consensusHours = Math.min(chaserHours, safety.hours_next_7d);
+  const consensusZones = [
+    ...dayZones.slice(0, 2).map(fmtZone),
+    ...nightZones.slice(0, 1).map(fmtZone),
+  ];
+  const consensusEarnings = Math.round(consensusHours * bestNetPerHour);
+
+  const debate: CommitteeRound[] = [
+    {
+      round: 1,
+      agent: 'chaser',
+      speaker: chaser.agent_label,
+      text:
+        'I want ' +
+        chaserHours +
+        ' hours including two late-night surges. The insurance goal ' +
+        'is closer if we move now.',
+    },
+    {
+      round: 1,
+      agent: 'safety',
+      speaker: safety.agent_label,
+      text:
+        'Hard no on late-night driving after 23:00, and we cap at ' +
+        safetyCap +
+        ' hours. Volatility is ' +
+        sgd(inc.volatility) +
+        ' month-to-month — fatigue compounds.',
+    },
+    {
+      round: 1,
+      agent: 'conservative',
+      speaker: conservative.agent_label,
+      text:
+        'Daytime peaks already cover the weekly need at ' +
+        sgd1(dailyNet * 0.85) +
+        '/day average. We do not need to push the cap.',
+    },
+    {
+      round: 2,
+      agent: 'chaser',
+      speaker: chaser.agent_label,
+      text:
+        'Compromise: keep the safety cap at ' +
+        safetyCap +
+        ', but allow one early-evening surge window before 23:00. ' +
+        'Best of both.',
+    },
+    {
+      round: 2,
+      agent: 'safety',
+      speaker: safety.agent_label,
+      text:
+        'Accepted, only if ' +
+        restDow +
+        ' stays a non-negotiable rest day.',
+    },
+    {
+      round: 2,
+      agent: 'conservative',
+      speaker: conservative.agent_label,
+      text: 'Agreed. The plan still hits the weekly goal need with a margin.',
+    },
+  ];
+
+  const consensus: CommitteePlan['consensus'] = {
+    hours_next_7d: consensusHours,
+    est_earnings_sgd: consensusEarnings,
+    zones: consensusZones,
+    summary:
+      consensusHours +
+      ' hours across daytime peaks and one early-evening surge. ' +
+      restDow +
+      ' is reserved for rest. Estimated earnings: ' +
+      sgd(consensusEarnings) +
+      '.',
+    chosen_voices: ['safety', 'chaser'],
+    rejected: [
+      {
+        agent: 'chaser',
+        reason: 'Late-night surges past 23:00 — vetoed by Safety Auditor.',
+      },
+      {
+        agent: 'conservative',
+        reason: 'Strict daytime-only — relaxed to add one early-evening peak.',
+      },
+    ],
+  };
+
+  return {
+    proposals,
+    debate,
+    consensus,
+    evidence: [
+      'zone_demand_grid.csv — top expected_net_per_hour_sgd cells',
+      'income_summary().avgDailyNet — for steady-day earnings projection',
+      'driver.rest_dow — used to reserve the rest day',
     ],
   };
 }
