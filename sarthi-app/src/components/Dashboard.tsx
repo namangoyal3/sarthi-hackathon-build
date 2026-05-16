@@ -127,6 +127,13 @@ export default function Dashboard() {
         <span className="cpf-entry-text">
           <b>CPF Life Mirror</b>
           <span>The Platform Workers Act opt-in is irreversible. See both lives, side by side.</span>
+        </span>
+        <span aria-hidden>→</span>
+      </button>
+
+
+
+
       {/* 5 — Multi-country switch — same agent, different shelf */}
       <button
         className="card cpf-entry"
@@ -137,6 +144,10 @@ export default function Dashboard() {
         <span className="cpf-entry-text">
           <b>Same agent, every Grab country</b>
           <span>SG · ID · MY · PH — see the shelf swap live.</span>
+        </span>
+        <span aria-hidden>→</span>
+      </button>
+
       {/* 5 — Voice Co-Driver entry — hands-free */}
       <button
         className="card cpf-entry"
@@ -147,6 +158,10 @@ export default function Dashboard() {
         <span className="cpf-entry-text">
           <b>Voice Co-Driver</b>
           <span>Hands-free. Tell Sarthi what you need; it speaks back.</span>
+        </span>
+        <span aria-hidden>→</span>
+      </button>
+
       {/* 5 — Time Machine entry — counterfactual replay */}
       <button
         className="card cpf-entry"
@@ -157,6 +172,10 @@ export default function Dashboard() {
         <span className="cpf-entry-text">
           <b>Time Machine</b>
           <span>Replay last week against the top windows. Two named decisions.</span>
+        </span>
+        <span aria-hidden>→</span>
+      </button>
+
       {/* 5 — Stress-Test Studio entry */}
       <button
         className="card cpf-entry"
@@ -167,6 +186,10 @@ export default function Dashboard() {
         <span className="cpf-entry-text">
           <b>Stress-Test Studio</b>
           <span>800 simulations of the next 12 weeks. See your weakest link.</span>
+        </span>
+        <span aria-hidden>→</span>
+      </button>
+
       {/* 5 — Family Vault entry */}
       <button
         className="card cpf-entry"
@@ -177,6 +200,10 @@ export default function Dashboard() {
         <span className="cpf-entry-text">
           <b>Family Vault</b>
           <span>One household state, three role-aware views.</span>
+        </span>
+        <span aria-hidden>→</span>
+      </button>
+
       {/* 5 — Scam Shield entry */}
       <button
         className="card cpf-entry"
@@ -191,7 +218,7 @@ export default function Dashboard() {
         <span aria-hidden>→</span>
       </button>
 
-      {/* 6 — Ask Sarthi: dig deeper */}
+      {/* 5 — Ask Sarthi: dig deeper */}
       <button
         className="card ask-bar"
         style={{ marginTop: 4 }}
