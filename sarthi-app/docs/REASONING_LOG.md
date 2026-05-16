@@ -36,3 +36,21 @@ and it never invented a number. The agent has values, not just calculations.
 
 > Reproduce live: run the app, pick Siti, confirm goals, tap the **+** button,
 > choose "S$400 bike repair", then tap **See how Sarthi reasoned →**.
+
+---
+
+## Scenario: Time Machine replays Siti's last 7 shifts
+
+| # | Action | Tool | Kind |
+|---|--------|------|------|
+| 1 | Read the last 7 rows of `driver_shift_log.csv` for the driver. | `time_machine_replay()` | tool |
+| 2 | Selected the top expected_net_per_hour cells for the same days-of-week. | `time_machine_replay()` | tool |
+| 3 | Computed reality and alternate-plan totals; derived the earnings uplift. | `time_machine_replay()` | tool |
+| 4 | Found the biggest miss (alternate beat reality) and biggest keep (reality beat alternate). | `time_machine_replay()` | tool |
+| 5 | Verified every figure traces to a CSV row; refused to predict surge volatility beyond the dataset. | `output_guard()` | guard |
+
+### Why this trace matters
+
+This is the part of Sarthi where the agent surfaces an invisible learning
+signal — the one judges of student work usually cannot see by hand. The
+Time Machine is not advice; it is a calibrated "what just happened, alternatively."

@@ -12,6 +12,7 @@ const TOOLS = [
   'allocate_surplus',
   'check_unlocks',
   'cpf_project',
+  'time_machine_replay',
 ];
 
 export default function Architecture() {

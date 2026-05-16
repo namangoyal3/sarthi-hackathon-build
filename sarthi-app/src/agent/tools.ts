@@ -192,6 +192,167 @@ export function predictGoals(ds: Dataset, driver: Driver): ProposedGoal[] {
   return proposals.slice(0, 4);
 }
 
+// time_machine — the Counterfactual Replay.
+// Compare Siti's actual recent shifts against the highest-yield windows from
+// the demand grid for the same period. The machine surfaces the gap between
+// what was earned and what could have been earned, with named decisions and
+// hour-level evidence. Pure tool reads; deterministic; no LLM in the loop.
+export interface ShiftFact {
+  date: string;
+  zone: string;
+  hours: number;
+  earned_sgd: number;
+  net_per_hour: number;
+}
+
+export interface AltShift {
+  date: string;
+  zone_label: string;
+  day_of_week: string;
+  hour: number;
+  hours: number;
+  expected_net_sgd: number;
+  expected_net_per_hour: number;
+  reason: string;
+}
+
+export interface TimeMachineReplay {
+  reality: {
+    shifts: ShiftFact[];
+    total_earned_sgd: number;
+    total_hours: number;
+    avg_net_per_hour: number;
+  };
+  alternate: {
+    shifts: AltShift[];
+    total_earned_sgd: number;
+    total_hours: number;
+    avg_net_per_hour: number;
+  };
+  delta: {
+    earnings_uplift_sgd: number;
+    hours_diff: number;
+    headline: string;
+    biggest_miss: { date: string; zone: string; gain_sgd: number };
+    biggest_keep: { date: string; zone: string; gain_sgd: number };
+  };
+  evidence: string[];
+}
+
+export function timeMachineReplay(
+  ds: Dataset,
+  driver: Driver,
+): TimeMachineReplay {
+  const driverShifts = ds.shifts
+    .filter((s) => s.driver_id === driver.driver_id)
+    .sort((a, b) => a.date.localeCompare(b.date));
+  const recent = driverShifts.slice(-7);
+  const realShifts: ShiftFact[] = recent.map((s) => ({
+    date: s.date,
+    zone: s.zone_label,
+    hours: s.duration_hours,
+    earned_sgd: s.net_earnings_sgd,
+    net_per_hour: s.net_per_hour_sgd,
+  }));
+  const realTotal = realShifts.reduce((a, b) => a + b.earned_sgd, 0);
+  const realHours = realShifts.reduce((a, b) => a + b.hours, 0);
+  const realAvg = realTotal / Math.max(realHours, 1);
+
+  // Alternate world: pick the highest expected_net_per_hour cells across the
+  // same days-of-week, sized to match the same total hours roughly.
+  const dowsCovered = new Set(
+    recent.map((s) => new Date(s.date).toLocaleDateString('en-SG', { weekday: 'short' })),
+  );
+  const altCells = [...ds.zones]
+    .filter((z) => z.expected_net_per_hour_sgd > 0 && dowsCovered.has(z.day_of_week.slice(0, 3)))
+    .sort((a, b) => b.expected_net_per_hour_sgd - a.expected_net_per_hour_sgd)
+    .slice(0, recent.length);
+  const altShifts: AltShift[] = altCells.map((z, i) => ({
+    date: recent[i % Math.max(recent.length, 1)]?.date ?? '',
+    zone_label: z.zone_label,
+    day_of_week: z.day_of_week,
+    hour: z.hour,
+    hours: 4,
+    expected_net_sgd: Math.round(z.expected_net_per_hour_sgd * 4),
+    expected_net_per_hour: z.expected_net_per_hour_sgd,
+    reason:
+      'Top expected_net_per_hour cell for ' +
+      z.day_of_week +
+      ' ' +
+      String(z.hour).padStart(2, '0') +
+      ':00 — surge=' +
+      z.surge_multiplier.toFixed(1) +
+      ', weather=' +
+      z.weather,
+  }));
+  const altTotal = altShifts.reduce((a, b) => a + b.expected_net_sgd, 0);
+  const altHours = altShifts.reduce((a, b) => a + b.hours, 0);
+  const altAvg = altTotal / Math.max(altHours, 1);
+
+  // Highlight the biggest miss (alt > real for that day) and biggest keep (where
+  // real was already in the top tier).
+  const realByDate = new Map<string, number>();
+  realShifts.forEach((s) => realByDate.set(s.date, (realByDate.get(s.date) ?? 0) + s.earned_sgd));
+  const altByDate = new Map<string, number>();
+  altShifts.forEach((s) => altByDate.set(s.date, (altByDate.get(s.date) ?? 0) + s.expected_net_sgd));
+
+  let biggestMissDate = '';
+  let biggestMissGain = 0;
+  let biggestKeepDate = '';
+  let biggestKeepGain = 0;
+  for (const date of altByDate.keys()) {
+    const gain = (altByDate.get(date) ?? 0) - (realByDate.get(date) ?? 0);
+    if (gain > biggestMissGain) {
+      biggestMissGain = gain;
+      biggestMissDate = date;
+    }
+    if (gain < biggestKeepGain) {
+      biggestKeepGain = gain;
+      biggestKeepDate = date;
+    }
+  }
+
+  const headline =
+    altTotal > realTotal
+      ? `If you had taken the top windows last week, you would have earned ${sgd(Math.round(altTotal - realTotal))} more.`
+      : `Your last week was already in the top tier — Sarthi's alternate plan would have been ${sgd(Math.round(realTotal - altTotal))} below.`;
+
+  return {
+    reality: {
+      shifts: realShifts,
+      total_earned_sgd: Math.round(realTotal),
+      total_hours: Math.round(realHours),
+      avg_net_per_hour: Math.round(realAvg * 100) / 100,
+    },
+    alternate: {
+      shifts: altShifts,
+      total_earned_sgd: Math.round(altTotal),
+      total_hours: Math.round(altHours),
+      avg_net_per_hour: Math.round(altAvg * 100) / 100,
+    },
+    delta: {
+      earnings_uplift_sgd: Math.round(altTotal - realTotal),
+      hours_diff: Math.round(altHours - realHours),
+      headline,
+      biggest_miss: {
+        date: biggestMissDate || recent[0]?.date || '',
+        zone: altShifts[0]?.zone_label ?? '',
+        gain_sgd: Math.round(biggestMissGain),
+      },
+      biggest_keep: {
+        date: biggestKeepDate || recent[0]?.date || '',
+        zone: realShifts[0]?.zone ?? '',
+        gain_sgd: Math.round(-biggestKeepGain),
+      },
+    },
+    evidence: [
+      `driver_shift_log.csv — last ${realShifts.length} shifts read`,
+      'zone_demand_grid.csv — top expected_net_per_hour cells filtered by day-of-week',
+      'No LLM in the loop. Counterfactual is a deterministic projection.',
+    ],
+  };
+}
+
 // match_product — best-fit GXS / Grab product for a need (need-driven)
 export function matchProduct(situation: {
   shock: boolean;
