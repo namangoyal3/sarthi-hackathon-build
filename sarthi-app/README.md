@@ -41,8 +41,10 @@ Sarthi addresses the specific pains:
 | 5 Unlock protection | Unlocks | `check_unlocks()` turns goal progress into **partner family health insurance** and a **lower FlexiLoan rate**. |
 
 Plus the signature interactions: a live **Reasoning Log**, a **shock re-plan**
-(log a S$400 bike repair → the dashboard recomputes), and the **CPF opt-in**
-trade-off model.
+(log a S$400 bike repair → the dashboard recomputes), the **CPF opt-in**
+trade-off model, and a continuous **Verification Streamer** — an adversarial
+critic that audits every surfaceable figure, surfaces a Truth Score badge in
+the device shell, and lets the driver inspect each claim's source.
 
 ### Why Grab can trust this with their money
 
