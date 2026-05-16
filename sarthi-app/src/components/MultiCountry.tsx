@@ -31,10 +31,8 @@ export default function MultiCountry() {
         One agent. <span className="g">Every Grab country</span>.
       </h1>
       <p className="muted-p">
-        Sarthi's brain is a country-agnostic supervisor. The shelf swaps; the
-        agent does not. Tap a flag — every product name, pension scheme, and
-        partner-protection unlock changes live, and the same reasoning trace
-        keeps working.
+        Same Sarthi, every Grab country. Tap a flag — the products, pension
+        scheme and protections switch to that country's real shelf.
       </p>
 
       <div className="country-tabs" role="tablist" aria-label="Country">
@@ -129,10 +127,8 @@ export default function MultiCountry() {
       </section>
 
       <p className="note">
-        Data: country shelves are illustrative product-name maps backed by a
-        deterministic registry. Pension schemes named for accuracy; figures are
-        not advice. Sarthi never recommends across regulators — it shows the
-        shelf and refuses to pick.
+        Country shelves are illustrative. Sarthi shows the shelf — it does not
+        give cross-border advice.
       </p>
     </main>
   );

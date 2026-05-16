@@ -63,10 +63,8 @@ export default function VisibleCommittee() {
         Three agents, <span className="g">one council</span>.
       </h1>
       <p className="muted-p">
-        Sarthi runs three earner agents in parallel and lets them argue. The
-        Conservative Earner protects the buffer; the Goal Chaser presses
-        toward the funded goal; the Fatigue & Safety Auditor caps hours and
-        protects rest. You see the disagreement, then the consensus.
+        Three planners argue it out: one protects your buffer, one pushes the
+        goal, one guards your rest. You see them disagree, then agree.
       </p>
 
       <div className="section-label">Proposals</div>

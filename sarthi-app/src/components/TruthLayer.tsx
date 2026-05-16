@@ -1,6 +1,7 @@
 import { useMemo } from 'react';
 import { useSarthi } from '../store/useSarthi';
 import { verifyFigures } from '../agent/tools';
+import WhyDisclosure from './WhyDisclosure';
 
 export function TruthScoreBadge() {
   const { ds, driver, go, screen } = useSarthi();
@@ -43,59 +44,54 @@ export default function TruthLayer() {
         ← Dashboard
       </button>
       <p className="chip" style={{ alignSelf: 'flex-start' }}>
-        Verification Streamer — adversarial critic
+        Truth check
       </p>
       <h1 className="lede" id="truth-h">
-        Every number, <span className="g">provable</span>.
+        Every number here is <span className="g">real</span>.
       </h1>
       <p className="muted-p">
-        A critic agent walks every figure Sarthi could surface for{' '}
-        {driver.name.split(' ')[0]} and tries to refute it. The Truth Score is
-        the share that survives. Anything that doesn't trace cleanly is{' '}
-        <b>refused</b>, not softened.
+        Nothing on your screens is made up. Each figure comes from your own
+        data — {report.passed} of {report.total} checked and confirmed.
       </p>
 
       <section className={`card truth-headline ${ok ? 'good' : 'warn'}`}>
         <div className="truth-score">
           <span>{report.truth_score_pct}%</span>
-          <small>Truth Score · {report.passed}/{report.total} claims grounded</small>
+          <small>
+            {report.passed}/{report.total} numbers confirmed from your data
+          </small>
         </div>
         <p className="goal-sub">{report.critic_summary}</p>
       </section>
 
-      <div className="section-label">Claims under review</div>
-      {report.claims.map((c) => (
-        <section
-          key={c.id}
-          className={`card truth-claim ${c.ok ? 'pass' : 'fail'}`}
-        >
-          <div className="truth-claim-head">
-            <span className="truth-mark" aria-hidden>
-              {c.ok ? '✓' : '✕'}
-            </span>
-            <span>
-              <b>{c.label}</b>
-              <span className="goal-sub">{c.value}</span>
-            </span>
-            <code className="truth-tool">{c.tool}</code>
-          </div>
-          <p className="goal-sub">
-            <b>Source:</b> {c.source}
-          </p>
-          <p className="goal-sub">
-            <b>Evidence:</b> {c.evidence}
-          </p>
-          <p className={`goal-sub truth-reason ${c.ok ? 'pass' : 'fail'}`}>
-            {c.reason}
-          </p>
-        </section>
-      ))}
-
-      <p className="note">
-        Generated at {report.generated_at}. The Truth Score is recomputed
-        on every screen open. The critic never softens a refusal — it shows you
-        what was rejected and why.
-      </p>
+      <WhyDisclosure label={`See all ${report.total} checks`}>
+        {report.claims.map((c) => (
+          <section
+            key={c.id}
+            className={`card truth-claim ${c.ok ? 'pass' : 'fail'}`}
+          >
+            <div className="truth-claim-head">
+              <span className="truth-mark" aria-hidden>
+                {c.ok ? '✓' : '✕'}
+              </span>
+              <span>
+                <b>{c.label}</b>
+                <span className="goal-sub">{c.value}</span>
+              </span>
+            </div>
+            <p className="goal-sub">
+              <b>From:</b> {c.source}
+            </p>
+            <p className={`goal-sub truth-reason ${c.ok ? 'pass' : 'fail'}`}>
+              {c.reason}
+            </p>
+          </section>
+        ))}
+        <p className="note">
+          Re-checked every time you open this screen. A number that can't be
+          traced is refused, never shown.
+        </p>
+      </WhyDisclosure>
     </main>
   );
 }

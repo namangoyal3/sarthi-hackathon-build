@@ -1,6 +1,7 @@
 import { useMemo } from 'react';
 import { useSarthi } from '../store/useSarthi';
 import { timeMachineReplay, sgd, sgd1 } from '../agent/tools';
+import WhyDisclosure from './WhyDisclosure';
 
 export default function TimeMachine() {
   const { ds, driver, go } = useSarthi();
@@ -26,10 +27,8 @@ export default function TimeMachine() {
         Last week, <span className="g">alternatively</span>.
       </h1>
       <p className="muted-p">
-        Sarthi replays the past 7 shifts against the highest-yield windows
-        from the demand grid for the same days. The point isn't blame — it
-        is a learning signal that is normally invisible. Every line traces
-        to a CSV row.
+        Your last 7 shifts vs the best windows on those same days. Not blame —
+        just what an extra hour here or there was worth.
       </p>
 
       <section className="card tm-headline">
@@ -123,10 +122,13 @@ export default function TimeMachine() {
       </section>
 
       <p className="note">
-        Avg net/hour — reality {sgd1(replay.reality.avg_net_per_hour)} ·
-        alternate {sgd1(replay.alternate.avg_net_per_hour)}. Evidence:{' '}
-        {replay.evidence.join(' · ')}.
+        Your hour: {sgd1(replay.reality.avg_net_per_hour)} · best windows:{' '}
+        {sgd1(replay.alternate.avg_net_per_hour)}
       </p>
+
+      <WhyDisclosure label="Where these numbers come from">
+        <p className="note">{replay.evidence.join(' · ')}</p>
+      </WhyDisclosure>
     </main>
   );
 }

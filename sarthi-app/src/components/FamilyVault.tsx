@@ -58,7 +58,6 @@ export default function FamilyVault() {
             <span className="family-tile-k">{t.title}</span>
             <b className="family-tile-v">{t.value}</b>
             <span className="goal-sub">{t.detail}</span>
-            <code className="family-tile-tool">{t.source}</code>
           </div>
         ))}
       </section>

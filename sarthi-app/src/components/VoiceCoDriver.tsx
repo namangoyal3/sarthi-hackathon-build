@@ -190,22 +190,13 @@ export default function VoiceCoDriver() {
           <div key={i} className={`voice-turn ${t.who}`}>
             <span className="voice-who">{t.who === 'driver' ? 'You' : 'Sarthi'}</span>
             <p>{t.text}</p>
-            {t.parse && (
-              <code className="voice-parse">
-                intent={t.parse.intent}
-                {t.parse.amount ? ` · amount=${t.parse.amount}` : ''}
-                {t.parse.hours ? ` · hours=${t.parse.hours}` : ''}
-                {' · '}lang={t.parse.language}
-              </code>
-            )}
           </div>
         ))}
       </section>
 
       <p className="note">
-        Intent parsing is deterministic (no LLM). Reply phrasing is grounded
-        in the dashboard state. Sarthi never executes a draw, transfer or
-        opt-in via voice — voice prepares; the driver confirms on screen.
+        Voice only prepares the action — you confirm on screen. Sarthi never
+        moves money by voice.
       </p>
     </main>
   );

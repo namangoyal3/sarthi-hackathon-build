@@ -2,6 +2,7 @@ import { useMemo } from 'react';
 import { useSarthi } from '../store/useSarthi';
 import { comparePaths, sgd } from '../agent/tools';
 import type { ShockPath } from '../agent/tools';
+import WhyDisclosure from './WhyDisclosure';
 
 const BUFFER_LABEL: Record<ShockPath['buffer_impact'], string> = {
   destroyed: 'Buffer destroyed',
@@ -38,10 +39,8 @@ export default function SharkMoment() {
         A <span className="g">{sgd(cmp.shock_amount)}</span> {cmp.shock_category} just hit.
       </h1>
       <p className="muted-p">
-        Three paths are open right now. Sarthi compares them on total cost,
-        buffer impact, and effort, with every figure traceable to a tool. Today,
-        most drivers in Siti's situation reach for an off-app loan because it
-        looks fastest. It is the most expensive way out.
+        Three ways out. Most drivers grab the off-app loan because it looks
+        fastest — it is the most expensive. Here is the real cost of each.
       </p>
 
       {cmp.paths.map((p) => (
@@ -127,9 +126,13 @@ export default function SharkMoment() {
       </button>
 
       <p className="note">
-        Sarthi never executes a draw, transfer, or extra shift. It prepares the
-        decision; you confirm. Assumptions: {cmp.assumptions.join(' ')}
+        Sarthi never moves money or books a shift. It prepares the decision;
+        you confirm.
       </p>
+
+      <WhyDisclosure label="Assumptions behind these numbers">
+        <p className="note">{cmp.assumptions.join(' ')}</p>
+      </WhyDisclosure>
     </main>
   );
 }

@@ -2,6 +2,7 @@ import { useMemo, useState } from 'react';
 import { useSarthi } from '../store/useSarthi';
 import { cpfTrajectory, sgd } from '../agent/tools';
 import type { CpfTrajectory } from '../agent/tools';
+import WhyDisclosure from './WhyDisclosure';
 
 const CHART_W = 320;
 const CHART_H = 140;
@@ -78,11 +79,8 @@ export default function CPFLifeMirror() {
         The <span className="g">irreversible</span> decision, made calibrated.
       </h1>
       <p className="muted-p">
-        Singapore's Platform Workers Act asks you to opt in to CPF — a one-way
-        choice. Sarthi projects both lives side by side and shows the delta in
-        cash, healthcare buffer, housing position, and shock resilience.
-        Sarthi <b>never</b> executes the opt-in. You confirm with the official
-        CPF Board portal.
+        Opting in to CPF is a one-way choice. Here are both futures, side by
+        side. Sarthi <b>never</b> opts you in — you decide.
       </p>
 
       <section className="cpf-chart-card card">
@@ -228,27 +226,24 @@ export default function CPFLifeMirror() {
         </p>
       </section>
 
-      <div className="section-label">How Sarthi reasoned</div>
-      <section className="card cpf-trace">
+      <WhyDisclosure label="How Sarthi worked this out">
         {reasoningTrace(traj).map((s, i) => (
           <div className="cpf-trace-row" key={i}>
             <span className="cpf-trace-num">{i + 1}</span>
             <div className="cpf-trace-text">
               <span>{s.label}</span>
-              <code className="cpf-trace-tool">{s.tool}</code>
             </div>
           </div>
         ))}
-      </section>
-
-      <p className="note">
-        Illustrative model. Worker share {(traj.worker_share * 100).toFixed(0)}%,
-        operator match {(traj.operator_share * 100).toFixed(0)}%, blended CPF
-        yield {(traj.cpf_growth_rate * 100).toFixed(1)}%, cash yield{' '}
-        {(traj.cash_growth_rate * 100).toFixed(1)}%, surplus rate{' '}
-        {(traj.surplus_rate * 100).toFixed(0)}% of net. Source:{' '}
-        {traj.source.map((s) => s.tool).join(', ')}.
-      </p>
+        <p className="note">
+          Illustrative model. Worker share{' '}
+          {(traj.worker_share * 100).toFixed(0)}%, operator match{' '}
+          {(traj.operator_share * 100).toFixed(0)}%, blended CPF yield{' '}
+          {(traj.cpf_growth_rate * 100).toFixed(1)}%, cash yield{' '}
+          {(traj.cash_growth_rate * 100).toFixed(1)}%, surplus rate{' '}
+          {(traj.surplus_rate * 100).toFixed(0)}% of net.
+        </p>
+      </WhyDisclosure>
     </main>
   );
 }

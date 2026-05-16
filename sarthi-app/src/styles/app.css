@@ -885,6 +885,47 @@
   border-radius: 10px;
   padding: 10px 12px;
 }
+
+/* Proof drawer — keeps the decision in front, the audit trail one tap away. */
+.why {
+  border: 1px solid var(--line);
+  border-radius: var(--radius-sm);
+  background: var(--white);
+}
+.why-summary {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 11px 14px;
+  font: var(--t-caption);
+  font-weight: 700;
+  color: var(--muted);
+  cursor: pointer;
+  list-style: none;
+  user-select: none;
+}
+.why-summary::-webkit-details-marker {
+  display: none;
+}
+.why-summary:hover {
+  color: var(--ink);
+}
+.why-chev {
+  transition: transform var(--dur-fast) var(--ease);
+  font-size: 10px;
+}
+.why[open] > .why-summary .why-chev {
+  transform: rotate(180deg);
+}
+.why-body {
+  padding: 0 14px 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  border-top: 1px solid var(--line);
+  padding-top: 12px;
+}
 .kv {
   display: flex;
   justify-content: space-between;

@@ -1,6 +1,7 @@
 import { useMemo, useState } from 'react';
 import { useSarthi } from '../store/useSarthi';
 import { runStressTest, sgd, STRESS_SHOCKS } from '../agent/tools';
+import WhyDisclosure from './WhyDisclosure';
 
 const DEFAULT_ON = ['medical', 'fuel', 'vehicle'];
 
@@ -31,15 +32,15 @@ export default function StressTest() {
         ← Dashboard
       </button>
       <p className="chip" style={{ alignSelf: 'flex-start' }}>
-        Stress-Test Studio — Monte Carlo
+        Stress test
       </p>
       <h1 className="lede" id="stress-h">
-        How <span className="g">resilient</span> is this week?
+        How <span className="g">safe</span> is this week?
       </h1>
       <p className="muted-p">
-        Sarthi simulates the next {result.weeks} weeks {result.iterations} times,
-        applying the shocks you select. The Resilience Score is the share of
-        simulations that stay above the safety line.
+        Sarthi plays out the next {result.weeks} weeks {result.iterations}{' '}
+        times with the shocks you pick. The score is how often you stay above
+        the safety line.
       </p>
 
       <div className="section-label">Pick the shocks to test</div>
@@ -114,9 +115,9 @@ export default function StressTest() {
         )}
       </section>
 
-      <p className="note">
-        {result.evidence.join(' · ')}
-      </p>
+      <WhyDisclosure label="How this was simulated">
+        <p className="note">{result.evidence.join(' · ')}</p>
+      </WhyDisclosure>
     </main>
   );
 }

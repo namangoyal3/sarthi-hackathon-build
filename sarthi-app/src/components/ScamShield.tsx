@@ -1,6 +1,7 @@
 import { useMemo, useState } from 'react';
 import { useSarthi } from '../store/useSarthi';
 import { scamCheck } from '../agent/tools';
+import WhyDisclosure from './WhyDisclosure';
 
 const SAMPLES = [
   'APPROVED! S$500 cash today. No NRIC needed. Daily interest 0.8%. WhatsApp me to claim before 8pm.',
@@ -35,10 +36,9 @@ export default function ScamShield() {
         The driver's <span className="g">advocate</span>.
       </h1>
       <p className="muted-p">
-        Paste a message you weren't sure about — a "fast cash" offer, a
-        too-good-to-be-true loan, an OTP request. Sarthi classifies it on
-        device (no upload), shows what the offer really costs over 30 days,
-        and drafts the regulated counter. The driver decides; Sarthi defends.
+        Paste a "fast cash" offer or a loan you're not sure about. Sarthi
+        checks it on your phone — nothing leaves the device — and shows what
+        it would really cost you.
       </p>
 
       <section className="card scam-input">
@@ -113,9 +113,9 @@ export default function ScamShield() {
         {report.counter.cta}
       </button>
 
-      <p className="note">
-        {report.evidence.join(' · ')}
-      </p>
+      <WhyDisclosure label="How Sarthi checked this">
+        <p className="note">{report.evidence.join(' · ')}</p>
+      </WhyDisclosure>
     </main>
   );
 }
