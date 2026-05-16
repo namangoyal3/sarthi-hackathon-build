@@ -4,10 +4,13 @@ import { verifyFigures } from '../agent/tools';
 
 export function TruthScoreBadge() {
   const { ds, driver, go, screen } = useSarthi();
-  if (!ds || !driver) return null;
+  const report = useMemo(
+    () => (ds && driver ? verifyFigures(ds, driver) : null),
+    [ds, driver],
+  );
+  if (!ds || !driver || !report) return null;
   // Hide on the onboarding/discovery flow so it doesn't clash visually.
   if (screen === 'onboarding' || screen === 'discovery') return null;
-  const report = useMemo(() => verifyFigures(ds, driver), [ds, driver]);
   const ok = report.truth_score_pct >= 90;
   return (
     <button
@@ -23,8 +26,11 @@ export function TruthScoreBadge() {
 
 export default function TruthLayer() {
   const { ds, driver, go } = useSarthi();
-  if (!ds || !driver) return null;
-  const report = useMemo(() => verifyFigures(ds, driver), [ds, driver]);
+  const report = useMemo(
+    () => (ds && driver ? verifyFigures(ds, driver) : null),
+    [ds, driver],
+  );
+  if (!ds || !driver || !report) return null;
   const ok = report.truth_score_pct >= 90;
 
   return (
