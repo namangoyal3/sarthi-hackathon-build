@@ -75,6 +75,10 @@ trade-off model, and a **Shock Stress-Test Studio** that runs 800
 deterministic Monte Carlo simulations of the next 12 weeks against
 user-selected shocks and outputs a Resilience Score, expected shortfall,
 weakest-link ranking, and final-cash histogram.
+(log a S$400 bike repair → the dashboard recomputes), the **CPF opt-in**
+trade-off model, and a **Family Vault** that holds one household state and
+projects three role-aware views (driver, spouse, dependent) with sensitive
+fields filtered — not deleted — per role.
 
 ### Why Grab can trust this with their money
 

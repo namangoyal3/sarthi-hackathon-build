@@ -20,6 +20,7 @@ const TOOLS = [
   'voice_intent',
   'time_machine_replay',
   'run_stress_test',
+  'family_view',
 ];
 
 export default function Architecture() {

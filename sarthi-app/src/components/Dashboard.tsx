@@ -167,6 +167,16 @@ export default function Dashboard() {
         <span className="cpf-entry-text">
           <b>Stress-Test Studio</b>
           <span>800 simulations of the next 12 weeks. See your weakest link.</span>
+      {/* 5 — Family Vault entry */}
+      <button
+        className="card cpf-entry"
+        onClick={() => go('family')}
+        aria-label="Open the Family Vault"
+      >
+        <span className="cpf-entry-dot">👨‍👩‍👧</span>
+        <span className="cpf-entry-text">
+          <b>Family Vault</b>
+          <span>One household state, three role-aware views.</span>
         </span>
         <span aria-hidden>→</span>
       </button>

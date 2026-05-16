@@ -17,6 +17,7 @@ import MultiCountry from './components/MultiCountry';
 import VoiceCoDriver from './components/VoiceCoDriver';
 import TimeMachine from './components/TimeMachine';
 import StressTest from './components/StressTest';
+import FamilyVault from './components/FamilyVault';
 import { ReplanOverlay, LogExpenseFab } from './components/ReplanOverlay';
 
 const TABS = [
@@ -83,6 +84,8 @@ function Screen() {
       return <TimeMachine />;
     case 'stress':
       return <StressTest />;
+    case 'family':
+      return <FamilyVault />;
     case 'dashboard':
     case 'reasoning':
     default:

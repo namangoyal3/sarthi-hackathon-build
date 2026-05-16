@@ -172,3 +172,19 @@ Time Machine is not advice; it is a calibrated "what just happened, alternativel
 Resilience for gig workers is *probabilistic*, not deterministic. The Studio
 makes that explicit: instead of a single "you'll be fine" claim, it shows a
 distribution, a score, and the shock most likely to break the buffer.
+## Scenario: Family Vault projects three role-aware views
+
+| # | Action | Tool | Kind |
+|---|--------|------|------|
+| 1 | Held one household state grounded in `monthly_summary.csv` and `recurring_obligations.csv`. | `family_view()` | tool |
+| 2 | Driver view exposed earnings, runway, obligation count. | `family_view()` | tool |
+| 3 | Spouse view filtered trip-level earnings; surfaced household readiness, health fund, school fees. | `family_view()` | tool |
+| 4 | Dependent view redacted financial figures; surfaced safety status only. | `family_view()` | tool |
+| 5 | Filtered (not deleted) data; the driver retains control of who sees what. | `output_guard()` | guard |
+
+### Why this trace matters
+
+Most platforms treat a household as one user. Sarthi treats it as one state
+with several authorized views. That is the difference between privacy as a
+slider and privacy as a structure — the right financial conversation can
+happen between adults without exposing children to numbers they cannot use.
