@@ -1184,6 +1184,99 @@
 .cpf-trace-tool {
   font-family: ui-monospace, monospace;
   font-size: 10.5px;
+/* ---- Verification Streamer (Truth layer) ---- */
+.truth-badge {
+  position: absolute;
+  right: 16px;
+  bottom: 150px;
+  padding: 6px 12px;
+  border-radius: 999px;
+  font: var(--t-caption);
+  font-weight: 800;
+  background: var(--white);
+  border: 1px solid var(--line);
+  box-shadow: var(--shadow-card);
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  z-index: 19;
+}
+.truth-badge.good {
+  color: var(--grab-dark);
+  border-color: var(--grab);
+}
+.truth-badge.warn {
+  color: var(--amber);
+  border-color: var(--amber);
+}
+.truth-headline {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  border-left: 4px solid var(--grab);
+}
+.truth-headline.warn {
+  border-left-color: var(--amber);
+}
+.truth-score {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+}
+.truth-score span {
+  font: var(--t-metric);
+  color: var(--grab-dark);
+}
+.truth-headline.warn .truth-score span {
+  color: var(--amber);
+}
+.truth-score small {
+  font: var(--t-caption);
+  color: var(--muted);
+}
+
+.truth-claim {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  border-left: 4px solid var(--grab);
+}
+.truth-claim.fail {
+  border-left-color: var(--red);
+  background: var(--red-tint);
+}
+.truth-claim-head {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.truth-claim-head b {
+  font-size: 13px;
+}
+.truth-claim-head span span {
+  display: block;
+  font: var(--t-caption);
+  color: var(--muted);
+}
+.truth-mark {
+  width: 24px;
+  height: 24px;
+  border-radius: 999px;
+  display: grid;
+  place-items: center;
+  background: var(--bg-tint);
+  color: var(--grab-dark);
+  font-size: 12px;
+  flex-shrink: 0;
+}
+.truth-claim.fail .truth-mark {
+  background: var(--red-tint);
+  color: var(--red);
+}
+.truth-tool {
+  margin-left: auto;
+  font-family: ui-monospace, monospace;
+  font-size: 10px;
   color: var(--grab-dark);
   background: var(--bg-tint);
   padding: 2px 6px;
@@ -1356,4 +1449,13 @@
   display: flex;
   flex-direction: column;
   gap: 3px;
+}
+.truth-reason {
+  font-style: italic;
+}
+.truth-reason.pass {
+  color: var(--grab-dark);
+}
+.truth-reason.fail {
+  color: var(--red);
 }

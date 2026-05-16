@@ -15,7 +15,7 @@ export type Screen =
   | 'reasoning'
   | 'architecture'
   | 'ask'
-  | 'committee';
+  | 'truth';
 
 interface ChatMsg {
   role: 'me' | 'ai';

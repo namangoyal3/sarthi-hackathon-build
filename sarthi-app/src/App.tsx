@@ -12,6 +12,7 @@ import AskSarthi from './components/AskSarthi';
 import CPFLifeMirror from './components/CPFLifeMirror';
 import SharkMoment from './components/SharkMoment';
 import VisibleCommittee from './components/VisibleCommittee';
+import TruthLayer, { TruthScoreBadge } from './components/TruthLayer';
 import { ReplanOverlay, LogExpenseFab } from './components/ReplanOverlay';
 
 const TABS = [
@@ -68,6 +69,8 @@ function Screen() {
       return <SharkMoment />;
     case 'committee':
       return <VisibleCommittee />;
+    case 'truth':
+      return <TruthLayer />;
     case 'dashboard':
     case 'reasoning':
     default:
@@ -127,6 +130,7 @@ export default function App() {
 
         {screen === 'reasoning' && <ReasoningLog />}
         {replanning && <ReplanOverlay />}
+        <TruthScoreBadge />
         <LogExpenseFab />
         <BottomNav />
       </div>

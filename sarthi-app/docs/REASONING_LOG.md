@@ -94,3 +94,19 @@ This is the part of Sarthi where heterogeneous voices argue with values, not
 just calculate. The driver sees the disagreement, then sees the converged
 plan with the rejected alternatives explicitly listed. That is the difference
 between "an AI that recommends" and "a council that decides with you."
+## Scenario: Verification Streamer audits the dashboard
+
+| # | Action | Tool | Kind |
+|---|--------|------|------|
+| 1 | Critic loaded the driver, the income summary, and the latest expense breakdown. | `verify_figures()` | tool |
+| 2 | For each surfaceable claim, bound a tool, a CSV source, and an evidence sentence. | `verify_figures()` | tool |
+| 3 | Re-ran each tool independently; refused any claim whose value did not match. | `verify_figures()` | guard |
+| 4 | Computed the Truth Score = passed / total. Anything refused was tagged with the reason. | `verify_figures()` | tool |
+| 5 | Surfaced the badge in the device shell; the dashboard never asserts a number that didn't pass. | `output_guard()` | guard |
+
+### Why this trace matters
+
+This is the part of Sarthi where the agent argues against itself. The critic
+ships *with* the product, runs continuously, and is allowed to refuse rather
+than soften. That is the difference between an LLM that hedges and an agent
+that has values.
