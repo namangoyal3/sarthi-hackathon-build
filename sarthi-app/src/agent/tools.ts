@@ -312,3 +312,163 @@ export function cpfProject(monthlyNet: number, bornBefore1995: boolean) {
     retirementGain,
   };
 }
+
+// cpf_trajectory — per-year life trajectory from current age to retirement,
+// computed two ways: opt-in to CPF as a Platform Worker vs stay out. This is
+// the data backing the CPF Life Mirror UI. It produces deterministic numbers,
+// each grounded in the driver's monthly net income (CSV) and a transparent
+// growth assumption stated in the source. The agent never advises — it
+// projects, and the driver decides.
+export interface CpfYearPoint {
+  year: number;          // calendar year (current year offset by years_from_now)
+  age: number;           // driver age at that year
+  monthly_take_home: number;
+  cumulative_cash_savings: number;     // post-tax surplus held in own pocket
+  cumulative_cpf_balance: number;      // CPF Ordinary + Special accounts (modelled)
+  housing_buffer: number;              // share of CPF earmarked toward HDB
+  healthcare_buffer: number;           // share of CPF earmarked toward MediSave
+  retirement_pot: number;              // share toward Retirement Account
+  shock_resilience_days: number;       // simulated runway in days at this snapshot
+}
+
+export interface CpfTrajectory {
+  current_age: number;
+  retirement_age: number;
+  monthly_net_today: number;
+  surplus_rate: number;            // fraction of net used to model own savings
+  cpf_growth_rate: number;
+  cash_growth_rate: number;
+  inflation_rate: number;
+  worker_share: number;
+  operator_share: number;
+  optInPath: CpfYearPoint[];
+  stayOutPath: CpfYearPoint[];
+  delta: {
+    age: number;
+    cash_diff: number;          // optIn cash - stayOut cash
+    pot_diff: number;           // optIn retirement pot - stayOut equivalent
+    healthcare_diff: number;    // optIn healthcare buffer - stayOut equivalent
+    housing_diff: number;
+    headline: string;
+  };
+  source: { tool: string; field: string }[];
+}
+
+export function cpfTrajectory(
+  ds: Dataset,
+  driver: Driver,
+  retirementAge = 65,
+): CpfTrajectory {
+  const inc = incomeSummary(ds, driver.driver_id);
+  const monthlyNet = Math.max(inc.avgMonthlyNet, 1);
+
+  // Illustrative model parameters — explicit so the trace can cite them.
+  const workerShare = 0.05;
+  const operatorShare = 0.07;
+  const cashGrowth = 0.018;       // GXS Bank effective annual yield (illustrative)
+  const cpfGrowth = 0.034;        // CPF blended yield across OA/SA (illustrative)
+  const inflation = 0.02;
+  const surplusRate = 0.12;       // dataset's flat 12% net-surplus proxy
+
+  // CPF account split (illustrative for a 45+ Platform Worker).
+  const splitOA = 0.45; // housing
+  const splitMA = 0.30; // healthcare
+  const splitRA = 0.25; // retirement
+
+  const baseDailyBurn = (inc.lastMonth?.total_expense ?? monthlyNet) / 30;
+
+  const optInPath: CpfYearPoint[] = [];
+  const stayOutPath: CpfYearPoint[] = [];
+
+  let cashOptIn = 0;
+  let cashStayOut = 0;
+  let cpfBalance = 0;
+  const today = new Date();
+  const baseYear = today.getFullYear();
+
+  for (let age = driver.age; age <= retirementAge; age++) {
+    const yearsFromNow = age - driver.age;
+    const monthly = monthlyNet * Math.pow(1 + 0.01, yearsFromNow); // mild wage drift
+    const annualNet = monthly * 12;
+
+    // Stay-out: full take-home flows into own pocket (surplusRate of it saves).
+    const stayOutContribution = annualNet * surplusRate;
+    cashStayOut = cashStayOut * (1 + cashGrowth) + stayOutContribution;
+
+    // Opt-in: worker share leaves the take-home; operator match goes to CPF;
+    // worker still saves the same surplusRate of the reduced take-home.
+    const optInTakeHome = monthly * (1 - workerShare);
+    const optInContribution = optInTakeHome * 12 * surplusRate;
+    cashOptIn = cashOptIn * (1 + cashGrowth) + optInContribution;
+    const cpfInflow = annualNet * (workerShare + operatorShare);
+    cpfBalance = cpfBalance * (1 + cpfGrowth) + cpfInflow;
+
+    const stayOutShockDays = Math.round(cashStayOut / Math.max(baseDailyBurn, 1));
+    // Opt-in resilience uses cash + a fraction of the MediSave buffer, capped.
+    const optInShockDays = Math.round(
+      (cashOptIn + cpfBalance * splitMA * 0.4) / Math.max(baseDailyBurn, 1),
+    );
+
+    stayOutPath.push({
+      year: baseYear + yearsFromNow,
+      age,
+      monthly_take_home: monthly,
+      cumulative_cash_savings: Math.round(cashStayOut),
+      cumulative_cpf_balance: 0,
+      housing_buffer: 0,
+      healthcare_buffer: 0,
+      retirement_pot: Math.round(cashStayOut),
+      shock_resilience_days: stayOutShockDays,
+    });
+    optInPath.push({
+      year: baseYear + yearsFromNow,
+      age,
+      monthly_take_home: optInTakeHome,
+      cumulative_cash_savings: Math.round(cashOptIn),
+      cumulative_cpf_balance: Math.round(cpfBalance),
+      housing_buffer: Math.round(cpfBalance * splitOA),
+      healthcare_buffer: Math.round(cpfBalance * splitMA),
+      retirement_pot: Math.round(cpfBalance * splitRA + cashOptIn),
+      shock_resilience_days: optInShockDays,
+    });
+  }
+
+  const optEnd = optInPath[optInPath.length - 1];
+  const outEnd = stayOutPath[stayOutPath.length - 1];
+  const cashDiff = optEnd.cumulative_cash_savings - outEnd.cumulative_cash_savings;
+  const potDiff = optEnd.retirement_pot - outEnd.retirement_pot;
+  const healthcareDiff = optEnd.healthcare_buffer - outEnd.healthcare_buffer;
+  const housingDiff = optEnd.housing_buffer - outEnd.housing_buffer;
+
+  const headline =
+    potDiff > 0
+      ? `By ${optEnd.age}, opting in is ${sgd(potDiff)} ahead at retirement, with ${sgd(healthcareDiff)} earmarked for medical and ${sgd(housingDiff)} toward housing.`
+      : `By ${optEnd.age}, staying out keeps ${sgd(-potDiff)} more in your pocket, but no employer match and no protected healthcare buffer.`;
+
+  return {
+    current_age: driver.age,
+    retirement_age: retirementAge,
+    monthly_net_today: monthlyNet,
+    surplus_rate: surplusRate,
+    cpf_growth_rate: cpfGrowth,
+    cash_growth_rate: cashGrowth,
+    inflation_rate: inflation,
+    worker_share: workerShare,
+    operator_share: operatorShare,
+    optInPath,
+    stayOutPath,
+    delta: {
+      age: optEnd.age,
+      cash_diff: cashDiff,
+      pot_diff: potDiff,
+      healthcare_diff: healthcareDiff,
+      housing_diff: housingDiff,
+      headline,
+    },
+    source: [
+      { tool: 'income_summary', field: 'avgMonthlyNet' },
+      { tool: 'monthly_summary.csv', field: 'total_expense' },
+      { tool: 'drivers.csv', field: 'age' },
+    ],
+  };
+}

@@ -14,7 +14,8 @@ export type Screen =
   | 'unlocks'
   | 'reasoning'
   | 'architecture'
-  | 'ask';
+  | 'ask'
+  | 'cpf';
 
 interface ChatMsg {
   role: 'me' | 'ai';
@@ -28,7 +29,7 @@ interface SarthiState {
   error: string | null;
 
   screen: Screen;
-  tab: 'dashboard' | 'route' | 'unlocks' | 'ask';
+  tab: 'dashboard' | 'route' | 'unlocks' | 'ask' | 'cpf';
   driver: Driver | null;
 
   proposed: ProposedGoal[];
@@ -105,7 +106,9 @@ export const useSarthi = create<SarthiState>((set, get) => ({
             ? 'route'
             : tab === 'unlocks'
               ? 'unlocks'
-              : 'ask',
+              : tab === 'cpf'
+                ? 'cpf'
+                : 'ask',
     }),
   openGoal: (goalId) => set({ focusGoalId: goalId, screen: 'goal' }),
 

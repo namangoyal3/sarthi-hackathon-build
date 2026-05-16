@@ -41,8 +41,11 @@ Sarthi addresses the specific pains:
 | 5 Unlock protection | Unlocks | `check_unlocks()` turns goal progress into **partner family health insurance** and a **lower FlexiLoan rate**. |
 
 Plus the signature interactions: a live **Reasoning Log**, a **shock re-plan**
-(log a S$400 bike repair → the dashboard recomputes), and the **CPF opt-in**
-trade-off model.
+(log a S$400 bike repair → the dashboard recomputes), and the **CPF Life Mirror**
+— a per-year, side-by-side life trajectory of opting in vs staying out of the
+Platform Workers Act CPF, with an age slider that re-runs `cpf_trajectory()`
+live. Sarthi never executes the opt-in; the driver confirms with the official
+CPF Board portal.
 
 ### Why Grab can trust this with their money
 
