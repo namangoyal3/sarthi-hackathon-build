@@ -41,8 +41,9 @@ Sarthi addresses the specific pains:
 | 5 Unlock protection | Unlocks | `check_unlocks()` turns goal progress into **partner family health insurance** and a **lower FlexiLoan rate**. |
 
 Plus the signature interactions: a live **Reasoning Log**, a **shock re-plan**
-(log a S$400 bike repair → the dashboard recomputes), and the **CPF opt-in**
-trade-off model.
+that opens directly into the **Shark Moment** (a side-by-side comparison of
+informal credit vs GXS FlexiLoan vs the earning route, with every figure
+traceable), and the **CPF opt-in** trade-off model.
 
 ### Why Grab can trust this with their money
 

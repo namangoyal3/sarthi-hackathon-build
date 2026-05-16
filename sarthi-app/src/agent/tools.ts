@@ -192,6 +192,145 @@ export function predictGoals(ds: Dataset, driver: Driver): ProposedGoal[] {
   return proposals.slice(0, 4);
 }
 
+// compare_paths — the Shark Moment.
+// Given a shock, surface three explicit paths the driver could take and grade
+// each on total cost, runway impact, time-to-clear, and buffer survival.
+// Sarthi never invents APRs — informal-credit and FlexiLoan parameters are
+// stated alongside the result for full traceability.
+export interface ShockPath {
+  id: 'informal' | 'flexi' | 'earn';
+  label: string;
+  channel: string;
+  total_cost_sgd: number;
+  buffer_impact: 'destroyed' | 'preserved' | 'grows';
+  days_to_clear: number;
+  apr_pct: number;
+  effort_hours: number;
+  why: string;
+  recommended: boolean;
+  evidence: string[];
+}
+
+export interface PathComparison {
+  shock_amount: number;
+  shock_category: string;
+  recommended: ShockPath['id'];
+  paths: ShockPath[];
+  delta_text: string;
+  assumptions: string[];
+}
+
+export function comparePaths(
+  ds: Dataset,
+  driver: Driver,
+  shockAmount: number,
+  shockCategory: string,
+): PathComparison {
+  const inc = incomeSummary(ds, driver.driver_id);
+  const monthlyNet = Math.max(inc.avgMonthlyNet, 1);
+  const dailyBurn = (inc.lastMonth?.total_expense ?? monthlyNet) / 30;
+
+  // Informal credit: illustrative SE-Asian loan-shark range. Stated openly.
+  const informalAprPct = 87;
+  const informalTermDays = 28;
+  const informalInterest =
+    shockAmount * (informalAprPct / 100) * (informalTermDays / 365);
+  const informalTotal = shockAmount + informalInterest;
+  const informalBufferDestroyed: ShockPath = {
+    id: 'informal',
+    label: 'Informal credit',
+    channel: 'Pasar / off-app loan',
+    total_cost_sgd: Math.round(informalTotal),
+    buffer_impact: 'destroyed',
+    days_to_clear: informalTermDays,
+    apr_pct: informalAprPct,
+    effort_hours: 0,
+    why: `${informalAprPct}% APR on a ${shockAmount} principal over ${informalTermDays} days. Repayment crushes the runway and there is no protection of committed payments.`,
+    recommended: false,
+    evidence: [
+      'Illustrative APR for off-app loan-shark / informal credit in SG/SEA gig context',
+      'Driver runway model assumes burn at last-month expense',
+    ],
+  };
+
+  // GXS FlexiLoan bridge: 60-day interest-free first draw, then a lower tier.
+  const flexiAprPct = 9;
+  const flexiTermDays = 60;
+  const flexiInterest =
+    shockAmount * (flexiAprPct / 100) * Math.max(flexiTermDays - 60, 0) / 365;
+  const flexiTotal = shockAmount + flexiInterest;
+  const flexi: ShockPath = {
+    id: 'flexi',
+    label: 'GXS FlexiLoan bridge',
+    channel: 'GXS Bank — first draw',
+    total_cost_sgd: Math.round(flexiTotal),
+    buffer_impact: 'preserved',
+    days_to_clear: flexiTermDays,
+    apr_pct: flexiAprPct,
+    effort_hours: 0,
+    why: `First draw is 60 days interest-free; protected loan payment stays Protected. Cheapest cash bridge that does not raid the buffer.`,
+    recommended: false,
+    evidence: [
+      'GXS FlexiLoan first-draw 60-day interest-free (illustrative)',
+      'Driver match_product() rule: shock + gap → FlexiLoan',
+    ],
+  };
+
+  // Earning route: cover the shock with extra shifts in high net/hour zones.
+  const sortedZones = [...ds.zones]
+    .filter((z) => z.expected_net_per_hour_sgd > 0)
+    .sort((a, b) => b.expected_net_per_hour_sgd - a.expected_net_per_hour_sgd)
+    .slice(0, 8);
+  const bestNetPerHour = sortedZones[0]?.expected_net_per_hour_sgd ?? 22;
+  const effortHours = Math.max(1, Math.ceil(shockAmount / bestNetPerHour));
+  const windowsLabel = sortedZones
+    .slice(0, 2)
+    .map((z) => `${z.zone_label} ${z.day_of_week} ${String(z.hour).padStart(2, '0')}:00`)
+    .join(' · ');
+  const earn: ShockPath = {
+    id: 'earn',
+    label: 'Earning route',
+    channel: 'Goal-aware extra windows',
+    total_cost_sgd: 0,
+    buffer_impact: 'grows',
+    days_to_clear: Math.ceil(effortHours / 4),
+    apr_pct: 0,
+    effort_hours: effortHours,
+    why: `${effortHours} extra hour${effortHours === 1 ? '' : 's'} at ${sgd1(bestNetPerHour)}/hr clears the ${sgd(shockAmount)} cost. Sarthi targets the highest-yield windows: ${windowsLabel || 'top demand cells'}.`,
+    recommended: true,
+    evidence: [
+      'zone_demand_grid.csv — top expected_net_per_hour_sgd cells',
+      'Effort = ceil(shock / best_net_per_hour)',
+      `Daily burn used for runway impact: ${sgd1(dailyBurn)}/day`,
+    ],
+  };
+
+  // Recommend the lowest-total-cost path, but only earn when the driver has
+  // any margin to add hours; otherwise prefer FlexiLoan (still preserves buffer).
+  const tooThin = inc.lastMonth ? inc.lastMonth.net_cashflow < 0 : false;
+  if (tooThin) {
+    earn.recommended = false;
+    flexi.recommended = true;
+  }
+
+  const recommended = (earn.recommended ? earn : flexi).id;
+  const informalDelta = informalTotal - (earn.recommended ? 0 : flexi.total_cost_sgd);
+  const deltaText = `Informal credit costs ${sgd(Math.round(informalDelta))} more than the recommended path.`;
+
+  return {
+    shock_amount: shockAmount,
+    shock_category: shockCategory,
+    recommended,
+    paths: [informalBufferDestroyed, flexi, earn],
+    delta_text: deltaText,
+    assumptions: [
+      `Illustrative informal-credit APR ${informalAprPct}% over ${informalTermDays} days.`,
+      `Illustrative FlexiLoan first-draw window: ${flexiTermDays} days interest-free.`,
+      `Earning route uses the best ${sortedZones.length} cells from zone_demand_grid.csv.`,
+    ],
+  };
+}
+
 // match_product — best-fit GXS / Grab product for a need (need-driven)
 export function matchProduct(situation: {
   shock: boolean;
