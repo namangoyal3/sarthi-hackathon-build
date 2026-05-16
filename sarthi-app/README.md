@@ -41,8 +41,10 @@ Sarthi addresses the specific pains:
 | 5 Unlock protection | Unlocks | `check_unlocks()` turns goal progress into **partner family health insurance** and a **lower FlexiLoan rate**. |
 
 Plus the signature interactions: a live **Reasoning Log**, a **shock re-plan**
-(log a S$400 bike repair → the dashboard recomputes), and the **CPF opt-in**
-trade-off model.
+(log a S$400 bike repair → the dashboard recomputes), the **CPF opt-in**
+trade-off model, and a **Multi-Country Toggle** that swaps the regional
+shelf live (SG/ID/MY/PH — bank, saving pocket, bridge credit, invest,
+pension, partner protection) without touching the agent's brain.
 
 ### Why Grab can trust this with their money
 

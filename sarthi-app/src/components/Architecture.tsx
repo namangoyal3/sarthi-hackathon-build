@@ -12,6 +12,7 @@ const TOOLS = [
   'allocate_surplus',
   'check_unlocks',
   'cpf_project',
+  'country_shelf',
 ];
 
 export default function Architecture() {

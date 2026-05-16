@@ -192,6 +192,150 @@ export function predictGoals(ds: Dataset, driver: Driver): ProposedGoal[] {
   return proposals.slice(0, 4);
 }
 
+// country_shelf — Sarthi's regional shelf swap. Same agent, same tools,
+// different jurisdictional shelf. Drives the live country toggle on the
+// architecture page and the demo. Stays illustrative; product names match
+// real services in each country but figures here are not advice.
+export type CountryCode = 'SG' | 'ID' | 'MY' | 'PH';
+
+export interface CountryShelf {
+  code: CountryCode;
+  name: string;
+  flag: string;
+  currency: string;
+  bank: string;
+  saving_pocket: string;
+  bridge_credit: string;
+  invest: string;
+  pension_scheme: string;
+  pension_one_way: boolean;
+  partner_protection: string;
+  median_gig_income: string;
+  notes: string;
+}
+
+const SHELVES: Record<CountryCode, CountryShelf> = {
+  SG: {
+    code: 'SG',
+    name: 'Singapore',
+    flag: '🇸🇬',
+    currency: 'SGD',
+    bank: 'GXS Bank',
+    saving_pocket: 'GXS Saving Pocket',
+    bridge_credit: 'GXS FlexiLoan',
+    invest: 'GXS Invest',
+    pension_scheme: 'CPF (Platform Workers Act)',
+    pension_one_way: true,
+    partner_protection: 'Grab Partner family hospital plan',
+    median_gig_income: 'S$1,500–2,500 / month',
+    notes:
+      'CPF opt-in is irreversible. Sarthi prepares the decision; the driver confirms with the official CPF Board portal.',
+  },
+  ID: {
+    code: 'ID',
+    name: 'Indonesia',
+    flag: '🇮🇩',
+    currency: 'IDR',
+    bank: 'OVO / DANA-linked wallet',
+    saving_pocket: 'Tabungan Berjangka pocket',
+    bridge_credit: 'PayLater micro-bridge',
+    invest: 'Reksa Dana entry tier',
+    pension_scheme: 'BPJS Ketenagakerjaan (JHT/JKK)',
+    pension_one_way: false,
+    partner_protection: 'Mitra family BPJS Kesehatan top-up',
+    median_gig_income: 'Rp 3,000,000–5,500,000 / month',
+    notes:
+      'BPJS contributions can be paused if work stops; Sarthi flags the runway impact rather than recommending the pause.',
+  },
+  MY: {
+    code: 'MY',
+    name: 'Malaysia',
+    flag: '🇲🇾',
+    currency: 'MYR',
+    bank: 'Touch ’n Go eWallet',
+    saving_pocket: 'GO+ pocket',
+    bridge_credit: 'GOpinjam micro-bridge',
+    invest: 'GOinvest',
+    pension_scheme: 'EPF i-Saraan (voluntary)',
+    pension_one_way: false,
+    partner_protection: 'PERKESO SKSPS partner injury cover',
+    median_gig_income: 'RM 2,000–3,800 / month',
+    notes:
+      'EPF i-Saraan is a voluntary top-up scheme; Sarthi shows the matching subsidy curve, not a fixed recommendation.',
+  },
+  PH: {
+    code: 'PH',
+    name: 'Philippines',
+    flag: '🇵🇭',
+    currency: 'PHP',
+    bank: 'GCash / Maya wallet',
+    saving_pocket: 'GSave pocket',
+    bridge_credit: 'GLoan / GCredit bridge',
+    invest: 'GInvest',
+    pension_scheme: 'SSS Self-Employed',
+    pension_one_way: false,
+    partner_protection: 'PhilHealth top-up + GrabCare',
+    median_gig_income: '₱20,000–35,000 / month',
+    notes:
+      'SSS Self-Employed contribution tiers are flexible; Sarthi shows the pension projection per tier without picking one.',
+  },
+};
+
+export function listCountries(): CountryShelf[] {
+  return [SHELVES.SG, SHELVES.ID, SHELVES.MY, SHELVES.PH];
+}
+
+export function countryShelf(code: CountryCode): CountryShelf {
+  return SHELVES[code];
+}
+
+export function compareShelves(): { row: string; SG: string; ID: string; MY: string; PH: string }[] {
+  return [
+    {
+      row: 'Wallet / bank',
+      SG: SHELVES.SG.bank,
+      ID: SHELVES.ID.bank,
+      MY: SHELVES.MY.bank,
+      PH: SHELVES.PH.bank,
+    },
+    {
+      row: 'Saving pocket',
+      SG: SHELVES.SG.saving_pocket,
+      ID: SHELVES.ID.saving_pocket,
+      MY: SHELVES.MY.saving_pocket,
+      PH: SHELVES.PH.saving_pocket,
+    },
+    {
+      row: 'Bridge credit',
+      SG: SHELVES.SG.bridge_credit,
+      ID: SHELVES.ID.bridge_credit,
+      MY: SHELVES.MY.bridge_credit,
+      PH: SHELVES.PH.bridge_credit,
+    },
+    {
+      row: 'Invest entry',
+      SG: SHELVES.SG.invest,
+      ID: SHELVES.ID.invest,
+      MY: SHELVES.MY.invest,
+      PH: SHELVES.PH.invest,
+    },
+    {
+      row: 'Pension scheme',
+      SG: SHELVES.SG.pension_scheme,
+      ID: SHELVES.ID.pension_scheme,
+      MY: SHELVES.MY.pension_scheme,
+      PH: SHELVES.PH.pension_scheme,
+    },
+    {
+      row: 'Partner protection',
+      SG: SHELVES.SG.partner_protection,
+      ID: SHELVES.ID.partner_protection,
+      MY: SHELVES.MY.partner_protection,
+      PH: SHELVES.PH.partner_protection,
+    },
+  ];
+}
+
 // match_product — best-fit GXS / Grab product for a need (need-driven)
 export function matchProduct(situation: {
   shock: boolean;
