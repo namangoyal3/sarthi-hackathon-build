@@ -9,7 +9,7 @@ export default function ReasoningLog() {
       <div className="sheet-scrim" onClick={() => go('dashboard')} />
       <div className="sheet">
         <div className="sheet-head">
-          <b>Reasoning log</b>
+          <b>How Sarthi worked this out</b>
           <button
             className="x"
             aria-label="Close"
@@ -20,8 +20,8 @@ export default function ReasoningLog() {
         </div>
         <div className="sheet-body">
           <p className="note">
-            Every step Sarthi took for this recommendation. Each figure traces
-            to a typed tool over your data — the agent does not invent numbers.
+            Every step behind this plan, in order. Each number comes from your
+            own data — nothing is made up.
           </p>
           {state.reasoning.map((s) => (
             <div
@@ -32,7 +32,6 @@ export default function ReasoningLog() {
               <span className="trace-n">{s.step}</span>
               <div className="trace-c">
                 <span className="act">{s.text}</span>
-                <span className="tool">{s.tool}()</span>
               </div>
             </div>
           ))}
