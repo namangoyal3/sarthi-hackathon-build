@@ -79,6 +79,10 @@ weakest-link ranking, and final-cash histogram.
 trade-off model, and a **Family Vault** that holds one household state and
 projects three role-aware views (driver, spouse, dependent) with sensitive
 fields filtered — not deleted — per role.
+(log a S$400 bike repair → the dashboard recomputes), the **CPF opt-in**
+trade-off model, and the **Scam Shield** — an on-device classifier for
+predatory loan-shark messages that names the real 30-day cost and drafts a
+regulated counter, with no data ever leaving the phone.
 
 ### Why Grab can trust this with their money
 

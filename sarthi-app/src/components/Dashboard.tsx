@@ -177,6 +177,16 @@ export default function Dashboard() {
         <span className="cpf-entry-text">
           <b>Family Vault</b>
           <span>One household state, three role-aware views.</span>
+      {/* 5 — Scam Shield entry */}
+      <button
+        className="card cpf-entry"
+        onClick={() => go('scam')}
+        aria-label="Open the Scam Shield"
+      >
+        <span className="cpf-entry-dot">🛡</span>
+        <span className="cpf-entry-text">
+          <b>Scam Shield</b>
+          <span>Paste a "fast cash" offer. See the real 30-day cost.</span>
         </span>
         <span aria-hidden>→</span>
       </button>

@@ -18,6 +18,7 @@ import VoiceCoDriver from './components/VoiceCoDriver';
 import TimeMachine from './components/TimeMachine';
 import StressTest from './components/StressTest';
 import FamilyVault from './components/FamilyVault';
+import ScamShield from './components/ScamShield';
 import { ReplanOverlay, LogExpenseFab } from './components/ReplanOverlay';
 
 const TABS = [
@@ -86,6 +87,8 @@ function Screen() {
       return <StressTest />;
     case 'family':
       return <FamilyVault />;
+    case 'scam':
+      return <ScamShield />;
     case 'dashboard':
     case 'reasoning':
     default:

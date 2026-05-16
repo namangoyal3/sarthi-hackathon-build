@@ -1028,6 +1028,23 @@ export interface TimeMachineReplay {
     headline: string;
     biggest_miss: { date: string; zone: string; gain_sgd: number };
     biggest_keep: { date: string; zone: string; gain_sgd: number };
+// scam_check — Scam Shield.
+// A deterministic classifier for predatory messages (loan-shark texts,
+// pressure-tactics, illegal-fee asks). The shield computes total cost over
+// a 30-day horizon to expose what the offer really costs, and proposes a
+// Sarthi plan as the counter. No data is sent anywhere — pure on-device
+// pattern matching plus tool reads.
+export type ScamLevel = 'safe' | 'suspicious' | 'predatory';
+
+export interface ScamReport {
+  level: ScamLevel;
+  reasons: string[];
+  estimated_apr_pct: number | null;
+  estimated_30d_cost_sgd: number | null;
+  counter: {
+    headline: string;
+    detail: string;
+    cta: string;
   };
   evidence: string[];
 }
@@ -1375,6 +1392,92 @@ export function runStressTest(
       'Bills and obligations',
     ],
     evidence: ['Dependent view — safety status only; financial data redacted.'],
+const KEYWORDS: { pat: RegExp; reason: string; bump: number }[] = [
+  { pat: /\b(approved|guaranteed|instant cash|fast cash|no questions)\b/i, reason: 'Pressure language: "instant"/"guaranteed"', bump: 2 },
+  { pat: /\b(no credit check|no nric|no document)\b/i, reason: 'Compliance bypass: no credit/document check', bump: 3 },
+  { pat: /\b(per day|daily interest|daily fee)\b/i, reason: 'Daily interest framing — usually masks high APR', bump: 2 },
+  { pat: /\b(transfer|send money|advance fee)\b/i, reason: 'Asks for upfront transfer/fee', bump: 3 },
+  { pat: /\b(pay back tomorrow|by tonight|today only)\b/i, reason: 'Artificial urgency window', bump: 2 },
+  { pat: /\b(whatsapp|telegram me|dm me)\b/i, reason: 'Pushes to off-app channel', bump: 1 },
+  { pat: /\b(ic number|nric number|password|otp)\b/i, reason: 'Asks for IC/NRIC/OTP — never legitimate', bump: 4 },
+];
+
+function findRate(text: string): number | null {
+  const m = text.match(/(\d+(?:\.\d+)?)\s?%(?:\s?(per\s?day|daily|per\s?week))?/i);
+  if (!m) return null;
+  const rate = parseFloat(m[1]);
+  if (/per\s?day|daily/i.test(m[2] ?? '')) return rate * 365;
+  if (/per\s?week/i.test(m[2] ?? '')) return rate * 52;
+  return rate;
+}
+
+function findAmount(text: string): number | null {
+  const m = text.match(/\$?\s?(\d{2,5})/);
+  return m ? parseInt(m[1], 10) : null;
+}
+
+export function scamCheck(text: string): ScamReport {
+  const reasons: string[] = [];
+  let score = 0;
+  for (const k of KEYWORDS) {
+    if (k.pat.test(text)) {
+      reasons.push(k.reason);
+      score += k.bump;
+    }
+  }
+
+  const apr = findRate(text);
+  const principal = findAmount(text);
+  let cost30: number | null = null;
+  if (apr !== null && principal !== null) {
+    cost30 = Math.round(principal + (principal * (apr / 100) * (30 / 365)));
+  }
+
+  if (apr !== null && apr >= 60) {
+    reasons.push(`Stated APR ${apr.toFixed(0)}% is well above legal lender ceilings.`);
+    score += 4;
+  }
+
+  let level: ScamLevel = 'safe';
+  if (score >= 3) level = 'suspicious';
+  if (score >= 6) level = 'predatory';
+
+  let counter = {
+    headline: 'Looks safe — Sarthi has no concerns from this message alone.',
+    detail:
+      'Sarthi only flags messages with pressure language, compliance bypass, or unusually high APRs.',
+    cta: 'Open Shark Moment if you have a real expense to compare paths.',
+  };
+  if (level === 'suspicious') {
+    counter = {
+      headline: 'Suspicious — Sarthi recommends NOT replying off-app.',
+      detail:
+        'Real lenders never ask for OTPs/IC numbers, and they do not pressure you with same-day windows. Compare to a regulated path before doing anything.',
+      cta: 'Open the Shark Moment to see real options for your situation.',
+    };
+  }
+  if (level === 'predatory') {
+    counter = {
+      headline: 'Predatory — refuse this offer.',
+      detail:
+        cost30 !== null
+          ? `On the principal and rate stated, this would cost roughly ${sgd(cost30)} over 30 days. Sarthi will draft a zero-cost earning route or a GXS FlexiLoan path that protects your buffer.`
+          : 'This message uses high-risk pressure tactics. Sarthi will draft a regulated alternative for your case.',
+      cta: 'Open the Shark Moment for a fully grounded comparison.',
+    };
+  }
+
+  return {
+    level,
+    reasons,
+    estimated_apr_pct: apr,
+    estimated_30d_cost_sgd: cost30,
+    counter,
+    evidence: [
+      'Deterministic keyword + APR/principal extraction.',
+      'No network call — message stays on device.',
+      'Comparison handed off to compare_paths() / Shark Moment.',
+    ],
   };
 }
 

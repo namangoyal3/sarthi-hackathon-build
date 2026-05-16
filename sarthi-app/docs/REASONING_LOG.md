@@ -188,3 +188,20 @@ Most platforms treat a household as one user. Sarthi treats it as one state
 with several authorized views. That is the difference between privacy as a
 slider and privacy as a structure — the right financial conversation can
 happen between adults without exposing children to numbers they cannot use.
+## Scenario: Scam Shield classifies "APPROVED! Fast cash, 0.8% daily, no NRIC"
+
+| # | Action | Tool | Kind |
+|---|--------|------|------|
+| 1 | Read the message on device — no upload, no network. | `scam_check()` | tool |
+| 2 | Matched 5 patterns: instant cash, no NRIC, daily interest, urgency window, off-app channel. | `scam_check()` | tool |
+| 3 | Extracted stated rate "0.8% daily" → annualized APR ≈ 292%. | `scam_check()` | tool |
+| 4 | Computed estimated 30-day cost on the message's stated principal. | `scam_check()` | tool |
+| 5 | Classified the message as predatory (score ≥ 6). | `scam_check()` | tool |
+| 6 | Drafted the regulated counter; handed off to compare_paths() for full comparison. | `compose()` | compose |
+
+### Why this trace matters
+
+This is the part of Sarthi that picks a side. The driver is being preyed on
+in a moment of stress; Sarthi reads the message *with the driver*, names the
+real cost, and proposes a regulated path. No data is uploaded. The agent is
+loyal to the person — not to the lender, and not even to the platform.

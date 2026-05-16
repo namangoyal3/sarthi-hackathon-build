@@ -21,6 +21,7 @@ const TOOLS = [
   'time_machine_replay',
   'run_stress_test',
   'family_view',
+  'scam_check',
 ];
 
 export default function Architecture() {
