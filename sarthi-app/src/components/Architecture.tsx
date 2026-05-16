@@ -19,6 +19,7 @@ const TOOLS = [
   'country_shelf',
   'voice_intent',
   'time_machine_replay',
+  'run_stress_test',
 ];
 
 export default function Architecture() {

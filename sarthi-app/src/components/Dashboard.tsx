@@ -157,6 +157,16 @@ export default function Dashboard() {
         <span className="cpf-entry-text">
           <b>Time Machine</b>
           <span>Replay last week against the top windows. Two named decisions.</span>
+      {/* 5 — Stress-Test Studio entry */}
+      <button
+        className="card cpf-entry"
+        onClick={() => go('stress')}
+        aria-label="Open the Stress-Test Studio"
+      >
+        <span className="cpf-entry-dot">≈</span>
+        <span className="cpf-entry-text">
+          <b>Stress-Test Studio</b>
+          <span>800 simulations of the next 12 weeks. See your weakest link.</span>
         </span>
         <span aria-hidden>→</span>
       </button>

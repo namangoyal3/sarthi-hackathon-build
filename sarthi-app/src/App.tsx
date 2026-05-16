@@ -16,6 +16,7 @@ import TruthLayer, { TruthScoreBadge } from './components/TruthLayer';
 import MultiCountry from './components/MultiCountry';
 import VoiceCoDriver from './components/VoiceCoDriver';
 import TimeMachine from './components/TimeMachine';
+import StressTest from './components/StressTest';
 import { ReplanOverlay, LogExpenseFab } from './components/ReplanOverlay';
 
 const TABS = [
@@ -80,6 +81,8 @@ function Screen() {
       return <VoiceCoDriver />;
     case 'time':
       return <TimeMachine />;
+    case 'stress':
+      return <StressTest />;
     case 'dashboard':
     case 'reasoning':
     default:

@@ -156,3 +156,19 @@ draw, transfer, or opt-in.
 This is the part of Sarthi where the agent surfaces an invisible learning
 signal — the one judges of student work usually cannot see by hand. The
 Time Machine is not advice; it is a calibrated "what just happened, alternatively."
+## Scenario: Stress-Test Studio runs 800 simulations
+
+| # | Action | Tool | Kind |
+|---|--------|------|------|
+| 1 | Read weekly net & expense from `monthly_summary.csv`; computed safety line. | `run_stress_test()` | tool |
+| 2 | Seeded a deterministic Mulberry32 PRNG from driver_id + iterations + weeks. | `run_stress_test()` | tool |
+| 3 | Ran 800 simulations of 12 weeks; jittered weekly net ±15% / expense ±5%. | `run_stress_test()` | tool |
+| 4 | Applied each enabled shock weekly with its probability and amount range. | `run_stress_test()` | tool |
+| 5 | Computed Resilience Score, Expected Shortfall, weakest-link ranking, and final-cash histogram. | `run_stress_test()` | tool |
+| 6 | Refused to claim any specific outcome — every result is a probability over the table. | `output_guard()` | guard |
+
+### Why this trace matters
+
+Resilience for gig workers is *probabilistic*, not deterministic. The Studio
+makes that explicit: instead of a single "you'll be fine" claim, it shows a
+distribution, a score, and the shock most likely to break the buffer.

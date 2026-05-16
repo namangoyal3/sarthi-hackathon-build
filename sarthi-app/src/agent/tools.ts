@@ -1099,6 +1099,135 @@ export function timeMachineReplay(
       `driver_shift_log.csv — last ${realShifts.length} shifts read`,
       'zone_demand_grid.csv — top expected_net_per_hour cells filtered by day-of-week',
       'No LLM in the loop. Counterfactual is a deterministic projection.',
+// stress_test — Shock Stress-Test Studio.
+// Monte Carlo resilience for a gig worker. Runs N deterministic-PRNG
+// simulations of a 12-week horizon, applying user-selected shock
+// distributions. Returns: probability of staying in safe runway, expected
+// shortfall, and the 3 weakest links found across simulations.
+export interface StressShock {
+  id: string;
+  label: string;
+  weekly_probability: number; // 0..1
+  amount_low: number;
+  amount_high: number;
+}
+
+export const STRESS_SHOCKS: StressShock[] = [
+  { id: 'medical', label: 'Medical bill', weekly_probability: 0.04, amount_low: 100, amount_high: 600 },
+  { id: 'school', label: 'School fees due', weekly_probability: 0.02, amount_low: 80, amount_high: 350 },
+  { id: 'fuel', label: 'Fuel price spike', weekly_probability: 0.06, amount_low: 30, amount_high: 90 },
+  { id: 'sick', label: 'Sick week (income drops)', weekly_probability: 0.03, amount_low: 200, amount_high: 700 },
+  { id: 'dependent', label: 'Dependent emergency', weekly_probability: 0.02, amount_low: 200, amount_high: 800 },
+  { id: 'vehicle', label: 'Vehicle repair', weekly_probability: 0.05, amount_low: 100, amount_high: 500 },
+];
+
+export interface StressResult {
+  weeks: number;
+  iterations: number;
+  shocks_enabled: string[];
+  resilience_score_pct: number;     // share of simulations that finished safe
+  expected_shortfall_sgd: number;   // average final cash gap, only over failed runs
+  weakest_links: { week: number; reason: string; freq: number }[];
+  histogram: number[];              // 10 buckets of final cash position
+  evidence: string[];
+}
+
+// Mulberry32 — small, fast, deterministic PRNG so the Studio is reproducible.
+function mulberry32(seed: number) {
+  let a = seed >>> 0;
+  return () => {
+    a |= 0;
+    a = (a + 0x6d2b79f5) | 0;
+    let t = Math.imul(a ^ (a >>> 15), 1 | a);
+    t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
+    return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+  };
+}
+
+export function runStressTest(
+  ds: Dataset,
+  driver: Driver,
+  enabled: string[],
+  iterations = 800,
+  weeks = 12,
+): StressResult {
+  const inc = incomeSummary(ds, driver.driver_id);
+  const last = inc.lastMonth;
+  const weeklyNet = inc.avgMonthlyNet / 4.33;
+  const weeklyExpense = (last?.total_expense ?? inc.avgMonthlyNet) / 4.33;
+  const startBalance =
+    latestBalance(ds, driver.driver_id) ?? inc.avgMonthlyNet * 1.4;
+  const safetyLine = weeklyExpense * 1.2;
+  const shocks = STRESS_SHOCKS.filter((s) => enabled.includes(s.id));
+
+  const rand = mulberry32(driver.driver_id.length * 1009 + iterations + weeks);
+
+  let safeCount = 0;
+  let shortfallSum = 0;
+  let shortfallCount = 0;
+  const histogram = new Array(10).fill(0);
+  const failureWeek: Record<number, number> = {};
+  const failureReason: Record<string, number> = {};
+
+  for (let i = 0; i < iterations; i++) {
+    let cash = startBalance;
+    let failed = false;
+    for (let w = 1; w <= weeks; w++) {
+      cash += weeklyNet * (0.85 + rand() * 0.3); // weekly net with jitter
+      cash -= weeklyExpense * (0.95 + rand() * 0.1);
+      for (const s of shocks) {
+        if (rand() < s.weekly_probability) {
+          const amt = s.amount_low + rand() * (s.amount_high - s.amount_low);
+          cash -= amt;
+          if (cash < safetyLine && !failed) {
+            failed = true;
+            failureWeek[w] = (failureWeek[w] ?? 0) + 1;
+            failureReason[s.id] = (failureReason[s.id] ?? 0) + 1;
+          }
+        }
+      }
+    }
+    if (!failed) safeCount += 1;
+    else {
+      shortfallSum += Math.max(safetyLine - cash, 0);
+      shortfallCount += 1;
+    }
+    const bucket = Math.max(0, Math.min(9, Math.floor((cash / (startBalance * 2)) * 10)));
+    histogram[bucket] += 1;
+  }
+
+  const resilience = Math.round((safeCount / iterations) * 100);
+  const expectedShortfall =
+    shortfallCount > 0 ? Math.round(shortfallSum / shortfallCount) : 0;
+  const weakestLinks = Object.entries(failureReason)
+    .map(([id, freq]) => {
+      const shock = STRESS_SHOCKS.find((s) => s.id === id);
+      return {
+        week:
+          parseInt(
+            Object.entries(failureWeek)
+              .sort((a, b) => b[1] - a[1])[0]?.[0] ?? '0',
+            10,
+          ),
+        reason: shock?.label ?? id,
+        freq,
+      };
+    })
+    .sort((a, b) => b.freq - a.freq)
+    .slice(0, 3);
+
+  return {
+    weeks,
+    iterations,
+    shocks_enabled: enabled,
+    resilience_score_pct: resilience,
+    expected_shortfall_sgd: expectedShortfall,
+    weakest_links: weakestLinks,
+    histogram,
+    evidence: [
+      'Mulberry32 deterministic PRNG seeded from driver id + iterations.',
+      'Weekly net & expense from monthly_summary.csv, jittered ±15% / ±5%.',
+      'Shock probabilities and amounts from STRESS_SHOCKS table (illustrative).',
     ],
   };
 }

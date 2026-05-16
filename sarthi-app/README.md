@@ -70,6 +70,11 @@ SpeechSynthesis, never executing a draw, transfer, or opt-in via voice.
 trade-off model, and a **Time Machine** counterfactual replay that compares
 the last 7 shifts against the top demand-grid windows for the same days,
 surfacing the biggest miss and biggest keep with named decisions.
+(log a S$400 bike repair → the dashboard recomputes), the **CPF opt-in**
+trade-off model, and a **Shock Stress-Test Studio** that runs 800
+deterministic Monte Carlo simulations of the next 12 weeks against
+user-selected shocks and outputs a Resilience Score, expected shortfall,
+weakest-link ranking, and final-cash histogram.
 
 ### Why Grab can trust this with their money
 
