@@ -147,6 +147,16 @@ export default function Dashboard() {
         <span className="cpf-entry-text">
           <b>Voice Co-Driver</b>
           <span>Hands-free. Tell Sarthi what you need; it speaks back.</span>
+      {/* 5 — Time Machine entry — counterfactual replay */}
+      <button
+        className="card cpf-entry"
+        onClick={() => go('time')}
+        aria-label="Open the Time Machine"
+      >
+        <span className="cpf-entry-dot">⟲</span>
+        <span className="cpf-entry-text">
+          <b>Time Machine</b>
+          <span>Replay last week against the top windows. Two named decisions.</span>
         </span>
         <span aria-hidden>→</span>
       </button>

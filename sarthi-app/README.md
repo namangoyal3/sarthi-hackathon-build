@@ -66,6 +66,10 @@ trade-off model, and a **Voice Co-Driver** that lets Siti talk to Sarthi
 hands-free during a shift — the agent parses intents deterministically
 (plan, log expense, status, rest, pickup translation) and replies via
 SpeechSynthesis, never executing a draw, transfer, or opt-in via voice.
+(log a S$400 bike repair → the dashboard recomputes), the **CPF opt-in**
+trade-off model, and a **Time Machine** counterfactual replay that compares
+the last 7 shifts against the top demand-grid windows for the same days,
+surfacing the biggest miss and biggest keep with named decisions.
 
 ### Why Grab can trust this with their money
 

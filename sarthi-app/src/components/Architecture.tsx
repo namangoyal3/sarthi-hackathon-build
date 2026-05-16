@@ -18,6 +18,7 @@ const TOOLS = [
   'verify_figures',
   'country_shelf',
   'voice_intent',
+  'time_machine_replay',
 ];
 
 export default function Architecture() {

@@ -15,6 +15,7 @@ import VisibleCommittee from './components/VisibleCommittee';
 import TruthLayer, { TruthScoreBadge } from './components/TruthLayer';
 import MultiCountry from './components/MultiCountry';
 import VoiceCoDriver from './components/VoiceCoDriver';
+import TimeMachine from './components/TimeMachine';
 import { ReplanOverlay, LogExpenseFab } from './components/ReplanOverlay';
 
 const TABS = [
@@ -77,6 +78,8 @@ function Screen() {
       return <MultiCountry />;
     case 'voice':
       return <VoiceCoDriver />;
+    case 'time':
+      return <TimeMachine />;
     case 'dashboard':
     case 'reasoning':
     default:
