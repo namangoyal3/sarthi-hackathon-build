@@ -36,3 +36,23 @@ and it never invented a number. The agent has values, not just calculations.
 
 > Reproduce live: run the app, pick Siti, confirm goals, tap the **+** button,
 > choose "S$400 bike repair", then tap **See how Sarthi reasoned →**.
+
+---
+
+## Scenario: Scam Shield classifies "APPROVED! Fast cash, 0.8% daily, no NRIC"
+
+| # | Action | Tool | Kind |
+|---|--------|------|------|
+| 1 | Read the message on device — no upload, no network. | `scam_check()` | tool |
+| 2 | Matched 5 patterns: instant cash, no NRIC, daily interest, urgency window, off-app channel. | `scam_check()` | tool |
+| 3 | Extracted stated rate "0.8% daily" → annualized APR ≈ 292%. | `scam_check()` | tool |
+| 4 | Computed estimated 30-day cost on the message's stated principal. | `scam_check()` | tool |
+| 5 | Classified the message as predatory (score ≥ 6). | `scam_check()` | tool |
+| 6 | Drafted the regulated counter; handed off to compare_paths() for full comparison. | `compose()` | compose |
+
+### Why this trace matters
+
+This is the part of Sarthi that picks a side. The driver is being preyed on
+in a moment of stress; Sarthi reads the message *with the driver*, names the
+real cost, and proposes a regulated path. No data is uploaded. The agent is
+loyal to the person — not to the lender, and not even to the platform.

@@ -931,3 +931,64 @@
     transition-duration: 0.01ms !important;
   }
 }
+
+/* ---- Scam Shield ---- */
+.scam-input {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.scam-input textarea {
+  font: var(--t-body);
+  padding: 10px;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  outline: none;
+  resize: vertical;
+}
+.scam-input textarea:focus {
+  border-color: var(--grab);
+}
+.scam-samples {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+.scam-headline {
+  border-left: 4px solid var(--grab);
+}
+.scam-headline.scam-amber {
+  border-left-color: var(--amber);
+  background: linear-gradient(180deg, var(--amber-tint) 0%, var(--white) 70%);
+}
+.scam-headline.scam-red {
+  border-left-color: var(--red);
+  background: linear-gradient(180deg, var(--red-tint) 0%, var(--white) 70%);
+}
+.scam-meta {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 6px;
+  margin-top: 6px;
+}
+.scam-meta div {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.scam-meta small {
+  font: var(--t-caption);
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+.scam-meta b {
+  font-size: 16px;
+  font-weight: 800;
+}
+.scam-reasons ul {
+  margin: 0 0 0 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}

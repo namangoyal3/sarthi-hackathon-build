@@ -117,7 +117,21 @@ export default function Dashboard() {
         </section>
       ))}
 
-      {/* 5 — Ask Sarthi: dig deeper */}
+      {/* 5 — Scam Shield entry */}
+      <button
+        className="card cpf-entry"
+        onClick={() => go('scam')}
+        aria-label="Open the Scam Shield"
+      >
+        <span className="cpf-entry-dot">🛡</span>
+        <span className="cpf-entry-text">
+          <b>Scam Shield</b>
+          <span>Paste a "fast cash" offer. See the real 30-day cost.</span>
+        </span>
+        <span aria-hidden>→</span>
+      </button>
+
+      {/* 6 — Ask Sarthi: dig deeper */}
       <button
         className="card ask-bar"
         style={{ marginTop: 4 }}
