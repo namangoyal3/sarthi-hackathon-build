@@ -36,3 +36,24 @@ and it never invented a number. The agent has values, not just calculations.
 
 > Reproduce live: run the app, pick Siti, confirm goals, tap the **+** button,
 > choose "S$400 bike repair", then tap **See how Sarthi reasoned →**.
+
+---
+
+## Scenario: the Visible Committee plans Siti's next 7 days
+
+| # | Action | Tool | Kind |
+|---|--------|------|------|
+| 1 | Pulled top expected_net_per_hour cells from `zone_demand_grid.csv`. | `committee_plan()` | tool |
+| 2 | Conservative Earner proposed 24h, daytime peaks only — buffer first. | `committee_plan()` | tool |
+| 3 | Goal Chaser proposed 38h including two late-night surges — accelerate insurance funding. | `committee_plan()` | tool |
+| 4 | Fatigue & Safety Auditor capped at 30h and vetoed driving past 23:00. | `committee_plan()` | tool |
+| 5 | Round 2 negotiation: Chaser conceded; one early-evening surge replaces a late-night surge. | `committee_plan()` | tool |
+| 6 | Consensus: 30h across daytime peaks + one early-evening surge; rest day reserved. | `committee_plan()` | tool |
+| 7 | Verified every figure traces to a CSV row or a stated assumption. | `output_guard()` | guard |
+
+### Why this trace matters
+
+This is the part of Sarthi where heterogeneous voices argue with values, not
+just calculate. The driver sees the disagreement, then sees the converged
+plan with the rejected alternatives explicitly listed. That is the difference
+between "an AI that recommends" and "a council that decides with you."

@@ -9,11 +9,13 @@ import UnlocksView from './components/UnlocksView';
 import ReasoningLog from './components/ReasoningLog';
 import Architecture from './components/Architecture';
 import AskSarthi from './components/AskSarthi';
+import VisibleCommittee from './components/VisibleCommittee';
 import { ReplanOverlay, LogExpenseFab } from './components/ReplanOverlay';
 
 const TABS = [
   { id: 'dashboard', label: 'Dashboard', ic: '◎' },
   { id: 'route', label: 'Pool', ic: '◈' },
+  { id: 'committee', label: 'Council', ic: '◇' },
   { id: 'unlocks', label: 'Unlocks', ic: '🛡' },
   { id: 'ask', label: 'Ask', ic: '✦' },
 ] as const;
@@ -57,6 +59,8 @@ function Screen() {
       return <Architecture />;
     case 'ask':
       return <AskSarthi />;
+    case 'committee':
+      return <VisibleCommittee />;
     case 'dashboard':
     case 'reasoning':
     default:

@@ -12,6 +12,7 @@ const TOOLS = [
   'allocate_surplus',
   'check_unlocks',
   'cpf_project',
+  'committee_plan',
 ];
 
 export default function Architecture() {
@@ -42,6 +43,9 @@ export default function Architecture() {
           <span className="pill">Cashflow Forecaster</span>
           <span className="pill">Goal Tracker</span>
           <span className="pill">Action Planner</span>
+          <span className="pill">Conservative Earner</span>
+          <span className="pill">Goal Chaser</span>
+          <span className="pill">Fatigue & Safety Auditor</span>
         </div>
         <p className="goal-sub" style={{ marginTop: 8 }}>
           Deterministic by default (demo-safe, sandboxed). Optional LLM seam
