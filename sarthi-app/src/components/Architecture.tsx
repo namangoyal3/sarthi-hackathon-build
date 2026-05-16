@@ -16,6 +16,7 @@ const TOOLS = [
   'compare_paths',
   'committee_plan',
   'verify_figures',
+  'country_shelf',
 ];
 
 export default function Architecture() {

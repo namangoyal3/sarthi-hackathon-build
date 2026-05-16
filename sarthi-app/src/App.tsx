@@ -13,6 +13,7 @@ import CPFLifeMirror from './components/CPFLifeMirror';
 import SharkMoment from './components/SharkMoment';
 import VisibleCommittee from './components/VisibleCommittee';
 import TruthLayer, { TruthScoreBadge } from './components/TruthLayer';
+import MultiCountry from './components/MultiCountry';
 import { ReplanOverlay, LogExpenseFab } from './components/ReplanOverlay';
 
 const TABS = [
@@ -71,6 +72,8 @@ function Screen() {
       return <VisibleCommittee />;
     case 'truth':
       return <TruthLayer />;
+    case 'country':
+      return <MultiCountry />;
     case 'dashboard':
     case 'reasoning':
     default:

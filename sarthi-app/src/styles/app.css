@@ -1109,6 +1109,47 @@
   display: flex;
   align-items: center;
   gap: 8px;
+/* ---- Multi-Country Toggle ---- */
+.country-tabs {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+.country-tab {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 12px;
+  border-radius: 999px;
+  border: 1px solid var(--line);
+  background: var(--white);
+  font: var(--t-caption);
+  font-weight: 800;
+  color: var(--ink);
+  transition: all var(--dur-fast) var(--ease);
+}
+.country-tab.on {
+  background: var(--grab);
+  color: #fff;
+  border-color: var(--grab);
+}
+.country-flag {
+  font-size: 16px;
+}
+.country-flag-lg {
+  font-size: 30px;
+  line-height: 1;
+}
+.country-card {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  border-left: 4px solid var(--grab);
+}
+.country-head {
+  display: flex;
+  gap: 12px;
+  align-items: center;
   border-bottom: 1px solid var(--line);
   padding-bottom: 8px;
   margin-bottom: 4px;
@@ -1254,6 +1295,10 @@
   font-size: 13px;
 }
 .truth-claim-head span span {
+.country-head b {
+  font-size: 14px;
+}
+.country-head span span {
   display: block;
   font: var(--t-caption);
   color: var(--muted);
@@ -1458,4 +1503,48 @@
 }
 .truth-reason.fail {
   color: var(--red);
+.country-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  font: var(--t-caption);
+  color: var(--muted);
+}
+.country-row b {
+  font-size: 12.5px;
+  color: var(--ink);
+  font-weight: 700;
+  text-align: right;
+  max-width: 70%;
+}
+.country-warn {
+  font-weight: 800;
+  color: var(--amber);
+}
+.country-grid-card {
+  padding: 10px 8px;
+}
+.country-table {
+  width: 100%;
+  border-collapse: collapse;
+  font: var(--t-caption);
+}
+.country-table th,
+.country-table td {
+  padding: 6px 4px;
+  border-bottom: 1px solid var(--line);
+  text-align: left;
+  vertical-align: top;
+}
+.country-table th {
+  color: var(--muted);
+  font-weight: 700;
+}
+.country-table td {
+  color: var(--ink);
+}
+.country-table .active {
+  background: var(--bg-tint);
+  color: var(--grab-dark);
+  font-weight: 700;
 }

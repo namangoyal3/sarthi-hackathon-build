@@ -110,3 +110,17 @@ This is the part of Sarthi where the agent argues against itself. The critic
 ships *with* the product, runs continuously, and is allowed to refuse rather
 than soften. That is the difference between an LLM that hedges and an agent
 that has values.
+## Scenario: Multi-Country Toggle (live shelf swap)
+
+| # | Action | Tool | Kind |
+|---|--------|------|------|
+| 1 | Loaded the deterministic country registry: SG, ID, MY, PH. | `country_shelf()` | tool |
+| 2 | Surfaced one country's shelf (bank, saving pocket, bridge credit, invest, pension, partner protection). | `country_shelf()` | tool |
+| 3 | On country switch, re-rendered the shelf live; the agent's brain did not change. | `compose()` | compose |
+| 4 | Refused to recommend across regulators — Sarthi shows the shelf, the driver picks. | `output_guard()` | guard |
+
+### Why this trace matters
+
+Most agentic demos are stuck in one jurisdiction. This scenario is the live
+proof that Sarthi's brain is country-agnostic and the shelf is a
+deterministic registry — exactly what makes it scalable across SE Asia.

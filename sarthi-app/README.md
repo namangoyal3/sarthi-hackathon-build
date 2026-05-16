@@ -57,6 +57,10 @@ and the **CPF opt-in** trade-off model.
 trade-off model, and a continuous **Verification Streamer** — an adversarial
 critic that audits every surfaceable figure, surfaces a Truth Score badge in
 the device shell, and lets the driver inspect each claim's source.
+(log a S$400 bike repair → the dashboard recomputes), the **CPF opt-in**
+trade-off model, and a **Multi-Country Toggle** that swaps the regional
+shelf live (SG/ID/MY/PH — bank, saving pocket, bridge credit, invest,
+pension, partner protection) without touching the agent's brain.
 
 ### Why Grab can trust this with their money
 

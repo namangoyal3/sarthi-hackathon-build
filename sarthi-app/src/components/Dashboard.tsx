@@ -127,6 +127,16 @@ export default function Dashboard() {
         <span className="cpf-entry-text">
           <b>CPF Life Mirror</b>
           <span>The Platform Workers Act opt-in is irreversible. See both lives, side by side.</span>
+      {/* 5 — Multi-country switch — same agent, different shelf */}
+      <button
+        className="card cpf-entry"
+        onClick={() => go('country')}
+        aria-label="Open the multi-country shelf"
+      >
+        <span className="cpf-entry-dot">🇸🇬</span>
+        <span className="cpf-entry-text">
+          <b>Same agent, every Grab country</b>
+          <span>SG · ID · MY · PH — see the shelf swap live.</span>
         </span>
         <span aria-hidden>→</span>
       </button>
