@@ -5,9 +5,12 @@ import type { FamilyRole } from '../agent/tools';
 
 export default function FamilyVault() {
   const { ds, driver, go } = useSarthi();
-  if (!ds || !driver) return null;
   const [role, setRole] = useState<FamilyRole>('driver');
-  const view = useMemo(() => familyView(ds, driver, role), [ds, driver, role]);
+  const view = useMemo(
+    () => (ds && driver ? familyView(ds, driver, role) : null),
+    [ds, driver, role],
+  );
+  if (!ds || !driver || !view) return null;
 
   return (
     <main className="scroll" aria-labelledby="family-h">

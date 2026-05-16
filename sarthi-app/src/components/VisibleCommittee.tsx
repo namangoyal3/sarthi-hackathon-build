@@ -30,15 +30,19 @@ function speak(round: CommitteeRound) {
 
 export default function VisibleCommittee() {
   const { ds, driver, go } = useSarthi();
-  if (!ds || !driver) return null;
-  const plan = useMemo(() => committeePlan(ds, driver), [ds, driver]);
+  const plan = useMemo(
+    () => (ds && driver ? committeePlan(ds, driver) : null),
+    [ds, driver],
+  );
   const [revealed, setRevealed] = useState(0);
 
   useEffect(() => {
-    if (revealed >= plan.debate.length) return;
+    if (!plan || revealed >= plan.debate.length) return;
     const t = window.setTimeout(() => setRevealed((r) => r + 1), 850);
     return () => window.clearTimeout(t);
-  }, [revealed, plan.debate.length]);
+  }, [revealed, plan]);
+
+  if (!ds || !driver || !plan) return null;
 
   const debateShown = plan.debate.slice(0, revealed);
   const debateDone = revealed >= plan.debate.length;

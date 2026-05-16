@@ -4,8 +4,11 @@ import { timeMachineReplay, sgd, sgd1 } from '../agent/tools';
 
 export default function TimeMachine() {
   const { ds, driver, go } = useSarthi();
-  if (!ds || !driver) return null;
-  const replay = useMemo(() => timeMachineReplay(ds, driver), [ds, driver]);
+  const replay = useMemo(
+    () => (ds && driver ? timeMachineReplay(ds, driver) : null),
+    [ds, driver],
+  );
+  if (!ds || !driver || !replay) return null;
 
   return (
     <main className="scroll" aria-labelledby="tm-h">

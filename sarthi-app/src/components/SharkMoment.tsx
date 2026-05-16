@@ -17,12 +17,14 @@ const BUFFER_CLASS: Record<ShockPath['buffer_impact'], string> = {
 
 export default function SharkMoment() {
   const { ds, driver, lastShock, go } = useSarthi();
-  if (!ds || !driver || !lastShock) return null;
-
   const cmp = useMemo(
-    () => comparePaths(ds, driver, lastShock.amount, lastShock.category),
+    () =>
+      ds && driver && lastShock
+        ? comparePaths(ds, driver, lastShock.amount, lastShock.category)
+        : null,
     [ds, driver, lastShock],
   );
+  if (!ds || !driver || !lastShock || !cmp) return null;
 
   const informal = cmp.paths.find((p) => p.id === 'informal')!;
   const recommended = cmp.paths.find((p) => p.recommended) ?? cmp.paths[0];

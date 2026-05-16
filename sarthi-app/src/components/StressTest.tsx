@@ -6,12 +6,12 @@ const DEFAULT_ON = ['medical', 'fuel', 'vehicle'];
 
 export default function StressTest() {
   const { ds, driver, go } = useSarthi();
-  if (!ds || !driver) return null;
   const [enabled, setEnabled] = useState<string[]>(DEFAULT_ON);
   const result = useMemo(
-    () => runStressTest(ds, driver, enabled),
+    () => (ds && driver ? runStressTest(ds, driver, enabled) : null),
     [ds, driver, enabled],
   );
+  if (!ds || !driver || !result) return null;
   const safe = result.resilience_score_pct >= 70;
   const max = Math.max(...result.histogram, 1);
 

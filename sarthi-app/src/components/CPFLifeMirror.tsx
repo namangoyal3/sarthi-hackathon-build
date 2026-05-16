@@ -43,9 +43,12 @@ function reasoningTrace(t: CpfTrajectory): { label: string; tool: string }[] {
 
 export default function CPFLifeMirror() {
   const { ds, driver, go } = useSarthi();
-  if (!ds || !driver) return null;
-  const traj = useMemo(() => cpfTrajectory(ds, driver, 65), [ds, driver]);
-  const [age, setAge] = useState(traj.retirement_age);
+  const traj = useMemo(
+    () => (ds && driver ? cpfTrajectory(ds, driver, 65) : null),
+    [ds, driver],
+  );
+  const [age, setAge] = useState(() => traj?.retirement_age ?? 0);
+  if (!ds || !driver || !traj) return null;
   const idx = Math.max(
     0,
     Math.min(traj.optInPath.length - 1, age - traj.current_age),
