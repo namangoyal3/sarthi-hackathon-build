@@ -1,0 +1,9 @@
+sarthi-app/src/App.tsx              merge=union
+sarthi-app/src/agent/tools.ts       merge=union
+sarthi-app/src/components/Architecture.tsx  merge=union
+sarthi-app/src/components/Dashboard.tsx     merge=union
+sarthi-app/src/styles/app.css       merge=union
+sarthi-app/README.md                merge=union
+sarthi-app/docs/REASONING_LOG.md    merge=union
+sarthi-app/docs/ARCHITECTURE.md     merge=union
+sarthi-app/package-lock.json        merge=union
