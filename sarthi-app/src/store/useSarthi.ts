@@ -14,7 +14,8 @@ export type Screen =
   | 'unlocks'
   | 'reasoning'
   | 'architecture'
-  | 'ask';
+  | 'ask'
+  | 'family';
 
 interface ChatMsg {
   role: 'me' | 'ai';

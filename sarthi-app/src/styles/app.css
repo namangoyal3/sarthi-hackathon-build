@@ -931,3 +931,88 @@
     transition-duration: 0.01ms !important;
   }
 }
+
+/* ---- Family Vault ---- */
+.family-tabs {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+.family-tab {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 12px;
+  border-radius: 14px;
+  border: 1px solid var(--line);
+  background: var(--white);
+  text-align: left;
+  flex: 1 1 30%;
+}
+.family-tab.on {
+  border-color: var(--grab);
+  background: var(--bg-tint);
+}
+.family-tab b {
+  font-size: 12.5px;
+  display: block;
+}
+.family-tab small {
+  font: var(--t-caption);
+  color: var(--muted);
+}
+.family-tiles {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 10px;
+}
+.family-tile {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: 10px 12px;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  background: var(--white);
+}
+.family-tile-k {
+  font: var(--t-caption);
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 0.6px;
+}
+.family-tile-v {
+  font-size: 18px;
+  font-weight: 800;
+}
+.family-tile-tool {
+  margin-top: 4px;
+  font-family: ui-monospace, monospace;
+  font-size: 10.5px;
+  color: var(--grab-dark);
+  background: var(--bg-tint);
+  padding: 2px 6px;
+  border-radius: 6px;
+  align-self: flex-start;
+}
+.family-goal {
+  margin-bottom: 10px;
+}
+.family-goal:last-child {
+  margin-bottom: 0;
+}
+.family-goal-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  font: var(--t-caption);
+  color: var(--muted);
+  margin-bottom: 4px;
+}
+.family-goal-row b {
+  color: var(--ink);
+  font-weight: 800;
+}
+.family-hidden ul {
+  margin: 0 0 6px 18px;
+}

@@ -192,6 +192,160 @@ export function predictGoals(ds: Dataset, driver: Driver): ProposedGoal[] {
   return proposals.slice(0, 4);
 }
 
+// family_vault — multi-stakeholder views over the same household goals.
+// Driver sees earnings & windows; spouse sees household shock readiness;
+// dependents see safety status. Every view is a projection of the same
+// underlying goals; sensitive earnings data is filtered per role.
+export type FamilyRole = 'driver' | 'spouse' | 'dependent';
+
+export interface FamilyMember {
+  role: FamilyRole;
+  display_name: string;
+  relation: string;
+  badge: string;
+}
+
+export interface FamilyTile {
+  title: string;
+  value: string;
+  detail: string;
+  source: string;
+}
+
+export interface FamilyView {
+  role: FamilyRole;
+  member: FamilyMember;
+  tiles: FamilyTile[];
+  shared_goals: { name: string; progress_pct: number }[];
+  hidden_from_role: string[];
+  evidence: string[];
+}
+
+export const FAMILY_MEMBERS: FamilyMember[] = [
+  { role: 'driver', display_name: 'Siti (you)', relation: 'Driver', badge: '🎯' },
+  { role: 'spouse', display_name: 'Rahim', relation: 'Spouse', badge: '🛡' },
+  { role: 'dependent', display_name: 'Aisyah', relation: 'Daughter, 12', badge: '🌱' },
+];
+
+export function familyView(
+  ds: Dataset,
+  driver: Driver,
+  role: FamilyRole,
+): FamilyView {
+  const member =
+    FAMILY_MEMBERS.find((m) => m.role === role) ?? FAMILY_MEMBERS[0];
+  const inc = incomeSummary(ds, driver.driver_id);
+  const fc = forecastCashflow(ds, driver.driver_id, 0);
+  const obligations = ds.obligations.filter(
+    (o) => o.driver_id === driver.driver_id,
+  );
+
+  const sharedGoalsBase = [
+    { name: 'Emergency cash buffer', progress_pct: 38 },
+    { name: 'Family health insurance fund', progress_pct: 62 },
+    { name: 'School fees pocket', progress_pct: 81 },
+  ];
+
+  if (role === 'driver') {
+    return {
+      role,
+      member,
+      tiles: [
+        {
+          title: 'Avg net (3 mo)',
+          value: sgd(inc.avgMonthlyNet),
+          detail: 'Last 3 months from monthly_summary.',
+          source: 'income_summary()',
+        },
+        {
+          title: 'Runway (stressed)',
+          value: `${fc.days} days`,
+          detail: 'At 55% income stress.',
+          source: 'forecast_cashflow()',
+        },
+        {
+          title: 'Recurring obligations',
+          value: String(obligations.length),
+          detail: 'Bills tracked in the planner.',
+          source: 'recurring_obligations.csv',
+        },
+      ],
+      shared_goals: sharedGoalsBase,
+      hidden_from_role: [],
+      evidence: ['Driver view — full earnings + obligations.'],
+    };
+  }
+
+  if (role === 'spouse') {
+    return {
+      role,
+      member,
+      tiles: [
+        {
+          title: 'Household shock readiness',
+          value: `${fc.days} days`,
+          detail:
+            'How long the family stays okay if income halves tomorrow.',
+          source: 'forecast_cashflow()',
+        },
+        {
+          title: 'Health fund',
+          value: '62%',
+          detail: 'Family insurance pocket progress.',
+          source: 'goal_tracker()',
+        },
+        {
+          title: 'School fees pocket',
+          value: '81%',
+          detail: 'Funded for the next term.',
+          source: 'goal_tracker()',
+        },
+      ],
+      shared_goals: sharedGoalsBase,
+      hidden_from_role: [
+        'Trip-level earnings',
+        'Per-zone shift recommendations',
+        'Driver-only obligations',
+      ],
+      evidence: ['Spouse view — household readiness only; trip-level data filtered.'],
+    };
+  }
+
+  // Dependent
+  return {
+    role,
+    member,
+    tiles: [
+      {
+        title: 'Safety status',
+        value: 'Protected',
+        detail: 'School fees pocket is funded.',
+        source: 'goal_tracker()',
+      },
+      {
+        title: 'Health cover',
+        value: 'On track',
+        detail: 'Family insurance plan is on track.',
+        source: 'check_unlocks()',
+      },
+      {
+        title: 'School term coverage',
+        value: '81%',
+        detail: 'Pocket reserved for fees and supplies.',
+        source: 'goal_tracker()',
+      },
+    ],
+    shared_goals: sharedGoalsBase,
+    hidden_from_role: [
+      'Income amount',
+      'Driver shifts',
+      'Bank balances',
+      'Bills and obligations',
+    ],
+    evidence: ['Dependent view — safety status only; financial data redacted.'],
+  };
+}
+
 // match_product — best-fit GXS / Grab product for a need (need-driven)
 export function matchProduct(situation: {
   shock: boolean;

@@ -117,7 +117,21 @@ export default function Dashboard() {
         </section>
       ))}
 
-      {/* 5 — Ask Sarthi: dig deeper */}
+      {/* 5 — Family Vault entry */}
+      <button
+        className="card cpf-entry"
+        onClick={() => go('family')}
+        aria-label="Open the Family Vault"
+      >
+        <span className="cpf-entry-dot">👨‍👩‍👧</span>
+        <span className="cpf-entry-text">
+          <b>Family Vault</b>
+          <span>One household state, three role-aware views.</span>
+        </span>
+        <span aria-hidden>→</span>
+      </button>
+
+      {/* 6 — Ask Sarthi: dig deeper */}
       <button
         className="card ask-bar"
         style={{ marginTop: 4 }}

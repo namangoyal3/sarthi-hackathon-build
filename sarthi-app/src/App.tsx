@@ -9,6 +9,7 @@ import UnlocksView from './components/UnlocksView';
 import ReasoningLog from './components/ReasoningLog';
 import Architecture from './components/Architecture';
 import AskSarthi from './components/AskSarthi';
+import FamilyVault from './components/FamilyVault';
 import { ReplanOverlay, LogExpenseFab } from './components/ReplanOverlay';
 
 const TABS = [
@@ -57,6 +58,8 @@ function Screen() {
       return <Architecture />;
     case 'ask':
       return <AskSarthi />;
+    case 'family':
+      return <FamilyVault />;
     case 'dashboard':
     case 'reasoning':
     default:
